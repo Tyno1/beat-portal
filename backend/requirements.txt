@@ -1,0 +1,14 @@
+fastapi
+fastapi[standard]
+uvicorn[standard]
+mutagen
+pathlib
+requests
+beautifulsoup4
+langchain
+langchain-openai
+duckduckgo-search
+python-dotenv
+aiofiles
+cachetools
+black
