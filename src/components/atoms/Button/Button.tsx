@@ -3,6 +3,7 @@ import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import type {
 	BaseButtonProps,
 	ButtonColor,
+	ButtonRadius,
 	ButtonSize,
 	ButtonVariant,
 } from "../types";
@@ -13,8 +14,11 @@ export interface ButtonProps
 	color?: ButtonColor;
 	variant?: ButtonVariant;
 	size?: ButtonSize;
+	radius?: ButtonRadius;
 	children: React.ReactNode;
 	fullWidth?: boolean;
+	iconBefore?: React.ReactNode;
+	iconAfter?: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -23,17 +27,29 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			color = "primary",
 			variant = "solid",
 			size = "md",
+			radius = "xl",
 			children,
 			loading = false,
 			disabled = false,
 			fullWidth = false,
+			iconBefore,
+			iconAfter,
 			className = "",
 			...props
 		},
 		ref,
 	) => {
+		const radiusClasses = {
+			none: "rounded-none",
+			sm: "rounded-sm",
+			md: "rounded-md",
+			lg: "rounded-lg",
+			xl: "rounded-xl",
+			full: "rounded-full",
+		};
+
 		const baseClasses =
-			"inline-flex items-center justify-center font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+			`inline-flex items-center justify-center font-medium ${radiusClasses[radius]} transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50`;
 
 		// Color classes for solid variant
 		const colorClasses = {
@@ -124,7 +140,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 						className="mr-2"
 					/>
 				)}
+				{iconBefore && <span className="mr-2">{iconBefore}</span>}
 				{children}
+				{iconAfter && <span className="ml-2">{iconAfter}</span>}
 			</button>
 		);
 	},

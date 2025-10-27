@@ -96,12 +96,12 @@
     --primary: rgb(220, 38, 38);
     --primary-foreground: rgb(255, 255, 255);
     --secondary: rgb(54, 54, 54); 
-    --secondary-foreground: rgb(171, 171, 171);
-    --background: rgb(14, 14, 14);
-    --foreground: rgb(171, 171, 171);
+    --secondary-foreground: rgb(255, 255, 255);
+    --background: rgb(0, 0, 0);
+    --foreground: rgb(255, 255, 255);
   
     --muted: rgb(54, 54, 54); 
-    --muted-foreground: rgb(255, 255, 255);
+    --muted-foreground: rgb(194, 194, 194);
     --border: rgb(25, 25, 25);
     --input: rgb(255, 255, 255);
     --ring: rgb(189, 16, 48);;
@@ -162,6 +162,9 @@ html {
 
 body {
   transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+button, a{
+  cursor: pointer;
 }
 
 /* Only transition theme-related properties on interactive elements */
