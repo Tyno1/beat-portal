@@ -23,6 +23,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-foreground-muted: var(--sidebar-foreground-muted);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-badge-success: var(--badge-success);
@@ -61,9 +62,10 @@
   --destructive: rgb(189, 16, 48);
   --destructive-foreground: rgb(255, 255, 255);
   --sidebar: rgb(255, 255, 255); 
-  --sidebar-foreground: rgb(68, 68, 68); 
+  --sidebar-foreground: rgb(189, 16, 48);
+  --sidebar-foreground-muted: rgb(68, 68, 68); 
   --sidebar-accent: rgb(241, 225, 225);
-  --sidebar-accent-foreground: rgb(206, 22, 25);
+  --sidebar-accent-foreground: rgb(68, 68, 68);
 
   --success: rgb(7, 102, 1);
   --success-background: rgb(221, 252, 219);
@@ -97,7 +99,7 @@
     --primary-foreground: rgb(255, 255, 255);
     --secondary: rgb(54, 54, 54); 
     --secondary-foreground: rgb(255, 255, 255);
-    --background: rgb(0, 0, 0);
+    --background: rgb(15, 15, 15);
     --foreground: rgb(255, 255, 255);
   
     --muted: rgb(54, 54, 54); 
@@ -105,7 +107,7 @@
     --border: rgb(25, 25, 25);
     --input: rgb(255, 255, 255);
     --ring: rgb(189, 16, 48);;
-    --card: rgb(44, 44, 44);
+    --card: rgb(0, 0, 0);
     --card-foreground: rgb(255, 255, 255);
     --card-border: rgb(55, 65, 81);
     --card-header: rgb(255, 255, 255);
@@ -115,9 +117,10 @@
     --destructive: rgb(206, 22, 25);
     --destructive-foreground: rgb(255, 255, 255);
     --sidebar: rgb(0, 0, 0); 
-    --sidebar-foreground: rgb(149, 149, 149); 
+    --sidebar-foreground: rgb(255, 255, 255);
+    --sidebar-foreground-muted: rgb(149, 149, 149); 
     --sidebar-accent: rgb(206, 22, 25);
-    --sidebar-accent-foreground: rgb(255, 255, 255);
+    --sidebar-accent-foreground: rgb(194, 194, 194);
   
     --success: rgb(11, 160, 0); 
     --success-background: rgb(4, 54, 0);

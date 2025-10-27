@@ -1,5 +1,7 @@
+import { PanelLeft } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { ThemeToggle } from "../atoms";
+import { Badge, IconButton, ThemeToggle } from "../atoms";
+import { Card, CardContent, CardHeader } from "../molecules";
 
 interface NavItem {
   path: string;
@@ -16,17 +18,11 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 bg-sidebar border-r border-border flex flex-col">
-        {/* Logo/Title */}
-        <div className="p-6 border-b border-border">
-          <h1 className="text-xl font-bold text-sidebar-foreground">
-            Beat Portal
-          </h1>
-        </div>
+      <aside className="w-64 bg-sidebar border border-border flex flex-col m-4 rounded-4xl relative">
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4 overflow-y-auto">
+        <IconButton variant="ghost" size="sm" icon={<PanelLeft />} aria-label="Open menu" className="absolute top-4 right-4" />
+
+        <nav className="flex-1 p-4 overflow-y-auto mt-10">
           <ul className="space-y-1">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -35,15 +31,23 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
                   <Link
                     to={item.path}
                     className={`
-                      flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-200
+                      flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200
                       ${
                         isActive
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent/30"
+                          ? "bg-sidebar-accent text-sidebar-foreground font-medium"
+                          : "text-sidebar-foreground-muted hover:bg-sidebar-accent/30"
                       }
                     `}
                   >
-                    <span className="text-xl">{item.icon}</span>
+                    <div
+                      className={`rounded-lg p-1 ${
+                        isActive
+                          ? "bg-sidebar-foreground text-sidebar"
+                          : "bg-sidebar-accent-foreground text-background"
+                      } `}
+                    >
+                      {item.icon}
+                    </div>
                     <span>{item.label}</span>
                   </Link>
                 </li>
@@ -52,27 +56,20 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
           </ul>
         </nav>
 
-        {/* Bottom Section */}
-        <div className="p-4 border-t border-border space-y-4">
-          {/* Offline Status */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-success/10 text-success">
-            <span className="w-2 h-2 rounded-full bg-success"></span>
-            <span className="text-sm font-medium">Offline Mode</span>
-          </div>
+        <div className="p-4 border-t border-border flex flex-col gap-4 items-center">
+          <Badge color="success" variant="outline" size="sm">
+            Offline Mode
+          </Badge>
 
-          {/* Library Stats */}
-          <div className="p-3 rounded-md bg-card">
-            <h3 className="text-sm font-semibold text-foreground mb-2">
-              Library Stats
-            </h3>
-            <div className="space-y-1 text-xs text-muted-foreground">
+          <Card size="sm">
+            <CardHeader>Library Stats</CardHeader>
+            <CardContent className="space-y-1 text-xs text-muted-foreground">
               <p>Total Tracks: 1,247</p>
               <p>Total Duration: 82h 15m</p>
               <p>Genres: 24</p>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Theme Toggle */}
           <div className="flex justify-center">
             <ThemeToggle />
           </div>
@@ -86,4 +83,3 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
     </div>
   );
 }
-

@@ -22,3 +22,6 @@ export {
 	CardHeader,
 	CardTitle,
 } from "./Card";
+
+// PageHeader component
+export { PageHeader } from "./PageHeader";
