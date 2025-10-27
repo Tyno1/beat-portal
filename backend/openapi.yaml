@@ -1,0 +1,1081 @@
+openapi: 3.0.3
+info:
+  title: Beat Portal API
+  description: |
+    FastAPI backend for Beat Portal - A DJ music library organizer with AI-powered metadata enhancement.
+    
+    ## Features
+    - Offline-first music library management
+    - Advanced metadata analysis (BPM, Key, Genre, Mood)
+    - AI-powered metadata enhancement
+    - Track organization and playlist management
+  version: 1.0.0
+  contact:
+    name: Beat Portal Support
+    email: support@beatportal.dev
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development server
+  - url: http://localhost:8000
+    description: Local base server
+
+tags:
+  - name: Library
+    description: Music library management operations
+  - name: Tracks
+    description: Individual track operations
+  - name: Metadata
+    description: Metadata analysis and management
+  - name: AI Enhancement
+    description: AI-powered metadata enhancement
+  - name: Playlists
+    description: Playlist management
+  - name: Analysis
+    description: Library statistics and analysis
+  - name: System
+    description: System and health check endpoints
+
+paths:
+  /health:
+    get:
+      tags:
+        - System
+      summary: Health Check
+      description: Check if the API is running and healthy
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  version:
+                    type: string
+                    example: 1.0.0
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /library/scan:
+    post:
+      tags:
+        - Library
+      summary: Scan Music Folders
+      description: Scan specified folders for music files and add them to the library
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - paths
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                  example: ["/Users/username/Music/DJ Collection", "/Users/username/Downloads"]
+                include_subfolders:
+                  type: boolean
+                  default: true
+                watch_for_changes:
+                  type: boolean
+                  default: true
+                skip_duplicates:
+                  type: boolean
+                  default: false
+      responses:
+        '202':
+          description: Scan started successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scan_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    example: scanning
+                  message:
+                    type: string
+                    example: Library scan started
+        '400':
+          description: Invalid request
+
+  /library/scan/{scan_id}/status:
+    get:
+      tags:
+        - Library
+      summary: Get Scan Status
+      description: Get the current status of a library scan operation
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Scan status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scan_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [scanning, completed, failed]
+                  progress:
+                    type: number
+                    format: float
+                    example: 75.5
+                  files_scanned:
+                    type: integer
+                    example: 1247
+                  files_added:
+                    type: integer
+                    example: 1200
+                  files_skipped:
+                    type: integer
+                    example: 47
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+  /tracks:
+    get:
+      tags:
+        - Tracks
+      summary: List Tracks
+      description: Get a paginated list of tracks with optional filtering and sorting
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: search
+          in: query
+          description: Search query for title, artist, or genre
+          schema:
+            type: string
+        - name: genre
+          in: query
+          schema:
+            type: string
+        - name: mood
+          in: query
+          schema:
+            type: string
+        - name: bpm_min
+          in: query
+          schema:
+            type: integer
+        - name: bpm_max
+          in: query
+          schema:
+            type: integer
+        - name: key
+          in: query
+          schema:
+            type: string
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [title, artist, bpm, key, year, date_added]
+            default: date_added
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Tracks retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Track'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags:
+        - Tracks
+      summary: Add Track Manually
+      description: Manually add a track to the library
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackCreate'
+      responses:
+        '201':
+          description: Track created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+
+  /tracks/{track_id}:
+    get:
+      tags:
+        - Tracks
+      summary: Get Track
+      description: Get detailed information about a specific track
+      parameters:
+        - name: track_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Track retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+        '404':
+          description: Track not found
+
+    put:
+      tags:
+        - Tracks
+      summary: Update Track
+      description: Update track metadata
+      parameters:
+        - name: track_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackUpdate'
+      responses:
+        '200':
+          description: Track updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+
+    delete:
+      tags:
+        - Tracks
+      summary: Delete Track
+      description: Remove a track from the library (does not delete the file)
+      parameters:
+        - name: track_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Track deleted successfully
+
+  /tracks/bulk/delete:
+    post:
+      tags:
+        - Tracks
+      summary: Bulk Delete Tracks
+      description: Delete multiple tracks from the library
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                track_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '200':
+          description: Tracks deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted_count:
+                    type: integer
+
+  /metadata/analyze:
+    post:
+      tags:
+        - Metadata
+      summary: Analyze Track Metadata
+      description: Analyze audio file to extract BPM, key, and other metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file_path:
+                  type: string
+                  example: /path/to/track.mp3
+                analysis_options:
+                  type: object
+                  properties:
+                    detect_bpm:
+                      type: boolean
+                      default: true
+                    detect_key:
+                      type: boolean
+                      default: true
+                    detect_genre:
+                      type: boolean
+                      default: false
+      responses:
+        '200':
+          description: Metadata analyzed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetadataAnalysis'
+
+  /metadata/batch-analyze:
+    post:
+      tags:
+        - Metadata
+      summary: Batch Analyze Metadata
+      description: Analyze metadata for multiple tracks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                track_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '202':
+          description: Batch analysis started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    example: processing
+
+  /ai/enhance:
+    post:
+      tags:
+        - AI Enhancement
+      summary: Enhance Track Metadata with AI
+      description: Use AI to fill in missing metadata for a track
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - track_id
+              properties:
+                track_id:
+                  type: string
+                  format: uuid
+                enhancement_options:
+                  type: object
+                  properties:
+                    enhance_genre:
+                      type: boolean
+                      default: true
+                    enhance_mood:
+                      type: boolean
+                      default: true
+                    enhance_bpm:
+                      type: boolean
+                      default: true
+                    enhance_key:
+                      type: boolean
+                      default: true
+      responses:
+        '200':
+          description: Metadata enhanced successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  track_id:
+                    type: string
+                    format: uuid
+                  enhanced_fields:
+                    type: object
+                    properties:
+                      genre:
+                        type: string
+                      mood:
+                        type: string
+                      bpm:
+                        type: integer
+                      key:
+                        type: string
+                  confidence_scores:
+                    type: object
+                    properties:
+                      genre:
+                        type: number
+                        format: float
+                      mood:
+                        type: number
+                        format: float
+
+  /ai/batch-enhance:
+    post:
+      tags:
+        - AI Enhancement
+      summary: Batch Enhance Multiple Tracks
+      description: Enhance metadata for multiple tracks using AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                track_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                enhancement_options:
+                  type: object
+                  properties:
+                    enhance_genre:
+                      type: boolean
+                      default: true
+                    enhance_mood:
+                      type: boolean
+                      default: true
+      responses:
+        '202':
+          description: Batch enhancement started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                  total_tracks:
+                    type: integer
+
+  /ai/jobs/{job_id}:
+    get:
+      tags:
+        - AI Enhancement
+      summary: Get Enhancement Job Status
+      description: Check the status of a batch enhancement job
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [pending, processing, completed, failed]
+                  progress:
+                    type: number
+                    format: float
+                  tracks_processed:
+                    type: integer
+                  tracks_total:
+                    type: integer
+                  started_at:
+                    type: string
+                    format: date-time
+                  completed_at:
+                    type: string
+                    format: date-time
+
+  /playlists:
+    get:
+      tags:
+        - Playlists
+      summary: List Playlists
+      description: Get all playlists
+      responses:
+        '200':
+          description: Playlists retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Playlist'
+
+    post:
+      tags:
+        - Playlists
+      summary: Create Playlist
+      description: Create a new playlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: "Summer House Mix"
+                description:
+                  type: string
+                  example: "High energy house tracks for summer sets"
+      responses:
+        '201':
+          description: Playlist created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+
+  /playlists/{playlist_id}:
+    get:
+      tags:
+        - Playlists
+      summary: Get Playlist
+      description: Get playlist details including tracks
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Playlist retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistDetail'
+
+    put:
+      tags:
+        - Playlists
+      summary: Update Playlist
+      description: Update playlist name or description
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Playlist updated successfully
+
+    delete:
+      tags:
+        - Playlists
+      summary: Delete Playlist
+      description: Delete a playlist
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Playlist deleted successfully
+
+  /playlists/{playlist_id}/tracks:
+    post:
+      tags:
+        - Playlists
+      summary: Add Tracks to Playlist
+      description: Add one or more tracks to a playlist
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                track_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '200':
+          description: Tracks added successfully
+
+    delete:
+      tags:
+        - Playlists
+      summary: Remove Tracks from Playlist
+      description: Remove tracks from a playlist
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                track_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '200':
+          description: Tracks removed successfully
+
+  /playlists/{playlist_id}/export:
+    post:
+      tags:
+        - Playlists
+      summary: Export Playlist
+      description: Export playlist in various formats
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                format:
+                  type: string
+                  enum: [m3u, pls, xspf, json]
+                  default: m3u
+                output_path:
+                  type: string
+      responses:
+        '200':
+          description: Playlist exported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_path:
+                    type: string
+                  format:
+                    type: string
+
+  /analysis/overview:
+    get:
+      tags:
+        - Analysis
+      summary: Get Library Overview
+      description: Get overall statistics about the music library
+      responses:
+        '200':
+          description: Overview statistics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryOverview'
+
+  /analysis/bpm-distribution:
+    get:
+      tags:
+        - Analysis
+      summary: Get BPM Distribution
+      description: Get distribution of tracks by BPM ranges
+      responses:
+        '200':
+          description: BPM distribution retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distribution:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        range:
+                          type: string
+                          example: "120-140"
+                        count:
+                          type: integer
+                        percentage:
+                          type: number
+                          format: float
+
+  /analysis/key-distribution:
+    get:
+      tags:
+        - Analysis
+      summary: Get Key Distribution
+      description: Get distribution of tracks by musical key
+      responses:
+        '200':
+          description: Key distribution retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distribution:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          example: "Am"
+                        count:
+                          type: integer
+                        percentage:
+                          type: number
+                          format: float
+
+  /analysis/genre-distribution:
+    get:
+      tags:
+        - Analysis
+      summary: Get Genre Distribution
+      description: Get distribution of tracks by genre
+      responses:
+        '200':
+          description: Genre distribution retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distribution:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        genre:
+                          type: string
+                        count:
+                          type: integer
+                        percentage:
+                          type: number
+                          format: float
+
+  /analysis/mood-distribution:
+    get:
+      tags:
+        - Analysis
+      summary: Get Mood Distribution
+      description: Get distribution of tracks by mood
+      responses:
+        '200':
+          description: Mood distribution retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distribution:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        mood:
+                          type: string
+                        count:
+                          type: integer
+                        percentage:
+                          type: number
+                          format: float
+
+components:
+  schemas:
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        artist:
+          type: string
+        album:
+          type: string
+        year:
+          type: integer
+        genre:
+          type: string
+        mood:
+          type: string
+        bpm:
+          type: integer
+        key:
+          type: string
+        duration:
+          type: integer
+          description: Duration in seconds
+        file_path:
+          type: string
+        file_size:
+          type: integer
+          description: File size in bytes
+        file_format:
+          type: string
+          example: mp3
+        bitrate:
+          type: integer
+        sample_rate:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_played:
+          type: string
+          format: date-time
+        play_count:
+          type: integer
+        metadata_complete:
+          type: boolean
+
+    TrackCreate:
+      type: object
+      required:
+        - file_path
+      properties:
+        file_path:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        album:
+          type: string
+        year:
+          type: integer
+        genre:
+          type: string
+        mood:
+          type: string
+        bpm:
+          type: integer
+        key:
+          type: string
+
+    TrackUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        artist:
+          type: string
+        album:
+          type: string
+        year:
+          type: integer
+        genre:
+          type: string
+        mood:
+          type: string
+        bpm:
+          type: integer
+        key:
+          type: string
+
+    MetadataAnalysis:
+      type: object
+      properties:
+        file_path:
+          type: string
+        detected_metadata:
+          type: object
+          properties:
+            bpm:
+              type: integer
+            key:
+              type: string
+            duration:
+              type: integer
+            sample_rate:
+              type: integer
+            bitrate:
+              type: integer
+        confidence_scores:
+          type: object
+          properties:
+            bpm:
+              type: number
+              format: float
+            key:
+              type: number
+              format: float
+
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        track_count:
+          type: integer
+        total_duration:
+          type: integer
+          description: Total duration in seconds
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    PlaylistDetail:
+      allOf:
+        - $ref: '#/components/schemas/Playlist'
+        - type: object
+          properties:
+            tracks:
+              type: array
+              items:
+                $ref: '#/components/schemas/Track'
+
+    LibraryOverview:
+      type: object
+      properties:
+        total_tracks:
+          type: integer
+        total_duration:
+          type: integer
+          description: Total duration in seconds
+        total_size:
+          type: integer
+          description: Total size in bytes
+        total_genres:
+          type: integer
+        average_bpm:
+          type: number
+          format: float
+        most_common_key:
+          type: string
+        metadata_completeness:
+          type: number
+          format: float
+          description: Percentage of tracks with complete metadata
+        tracks_missing_metadata:
+          type: integer
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        size:
+          type: integer
+        total_pages:
+          type: integer
+        total_items:
+          type: integer
+        has_next:
+          type: boolean
+        has_previous:
+          type: boolean

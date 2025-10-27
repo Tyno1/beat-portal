@@ -1,153 +1,159 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-border: var(--card-border);
+  --color-card-header: var(--card-header);
+  --color-card-muted: var(--card-muted);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-badge-success: var(--badge-success);
+  --color-badge-success-background: var(--badge-success-background);
+  --color-badge-error: var(--badge-error);
+  --color-badge-error-background: var(--badge-error-background);
+  --color-badge-warning: var(--badge-warning);
+  --color-badge-warning-background: var(--badge-warning-background);
+  --color-badge-info: var(--badge-info);
+  --color-badge-info-background: var(--badge-info-background);
+  --color-badge-secondary: var(--badge-secondary);
+  --color-badge-secondary-background: var(--badge-secondary-background);
+  --radius: var(--radius);
+}
 /* Custom CSS variables for theming */
 :root {
-  --color-primary: 206 22 25;
-  --color-primary-foreground: 255 255 255;
-  --color-secondary: 54 54 54; 
-  --color-secondary-foreground: 255 255 255;
-  --color-background: 217 217 217;
-  --color-foreground: 68 68 68;
+  --primary: rgb(189, 16, 48);
+  --primary-foreground: rgb(255, 255, 255);
+  --secondary: rgb(54, 54, 54); 
+  --secondary-foreground: rgb(255, 255, 255);
+  --background: rgb(217, 217, 217);
+  --foreground: rgb(68, 68, 68);
 
-  --color-muted: 246 242 242; 
-  --color-muted-foreground: 68 68 68;
-  --color-border: 234 236 240;
-  --color-input: 217 217 217;
-  --color-ring: 229 57 53; /* #E53935 - red focus ring */
-  --color-card: 255 255 255;
-  --color-card-foreground: 0 0 0;
-  --color-popover: 241 225 225;
-  --color-popover-foreground: 68 68 68;
-  --color-destructive: 206 22 25;
-  --color-destructive-foreground: 255 255 255;
-  --color-sidebar: 255 255 255; 
-  --color-sidebar-foreground: 68 68 68; 
-  --color-sidebar-accent: 241 225 225;
-  --color-sidebar-accent-foreground: 206 22 25;
+  --muted: rgb(246, 242, 242); 
+  --muted-foreground: rgb(68, 68, 68);
+  --border: rgb(234, 236, 240);
+  --input: rgb(217, 217, 217);
+  --ring: rgb(189, 16, 48);;
+  --card: rgb(255, 255, 255);
+  --card-foreground: rgb(68, 68, 68);
+  --card-border: rgb(229, 231, 235);
+  --card-header: rgb(68, 68, 68);
+  --card-muted: rgb(160, 160, 160);
+  --popover: rgb(241, 225, 225);
+  --popover-foreground: rgb(68, 68, 68);
+  --destructive: rgb(189, 16, 48);
+  --destructive-foreground: rgb(255, 255, 255);
+  --sidebar: rgb(255, 255, 255); 
+  --sidebar-foreground: rgb(68, 68, 68); 
+  --sidebar-accent: rgb(241, 225, 225);
+  --sidebar-accent-foreground: rgb(206, 22, 25);
 
-  --color-success: 11 160 0; 
-  --color-success-background: 221 252 219;
+  --success: rgb(7, 102, 1);
+  --success-background: rgb(221, 252, 219);
+  --badge-success: rgb(7, 102, 1);
+  --badge-success-background: rgb(221, 252, 219);
+  --badge-error: rgb(206, 22, 25);
+  --badge-error-background: rgb(254, 226, 226);
+  --badge-warning: rgb(175, 84, 5);
+  --badge-warning-background: rgb(255, 255, 255);
+  --badge-info: rgb(19, 87, 196);
+  --badge-info-background: rgb(219, 234, 254);
+  --badge-secondary: rgb(68, 68, 68);
+  --badge-secondary-background: rgb(245, 245, 245);
+  --alert-success:rgb(7, 102, 1);
+  --alert-success-background: rgb(221, 252, 219);
+  --alert-success-border: rgb(7, 102, 1);
+  --alert-error: rgb(206, 22, 25);
+  --alert-error-background: rgb(254, 226, 226);
+  --alert-error-border: rgb(248, 113, 113);
+  --alert-warning: rgb(190, 88, 5);
+  --alert-warning-background: rgb(255, 255, 255);
+  --alert-warning-border: rgb(251, 191, 36);
+  --alert-info: rgb(59, 130, 246);
+  --alert-info-background: rgb(219, 234, 254);
+  --alert-info-border: rgb(96, 165, 250);
   --radius: 0.5rem;
 }
 
 .dark {
-    --color-primary: 206 22 25;
-    --color-primary-foreground: 255 255 255;
-    --color-secondary: 54 54 54; 
-    --color-secondary-foreground: 171 171 171;
-    --color-background: 14 14 14;
-    --color-foreground: 171 171 171;
+    --primary: rgb(220, 38, 38);
+    --primary-foreground: rgb(255, 255, 255);
+    --secondary: rgb(54, 54, 54); 
+    --secondary-foreground: rgb(171, 171, 171);
+    --background: rgb(14, 14, 14);
+    --foreground: rgb(171, 171, 171);
   
-    --color-muted: 54 54 54; 
-    --color-muted-foreground:255 255 255;
-    --color-border: 25 25 25;
-    --color-input: 255 255 255;
-    --color-ring: 229 57 53; /* #E53935 - red focus ring */
-    --color-card: 0 0 0;
-    --color-card-foreground: 255 255 255;
-    --color-popover: 0 0 0;
-    --color-popover-foreground: 255 255 255;
-    --color-destructive: 206 22 25;
-    --color-destructive-foreground: 255 255 255;
-    --color-sidebar: 0 0 0; 
-    --color-sidebar-foreground: 149 149 149; 
-    --color-sidebar-accent: 206 22 25;
-    --color-sidebar-accent-foreground: 255 255 255;
+    --muted: rgb(54, 54, 54); 
+    --muted-foreground: rgb(255, 255, 255);
+    --border: rgb(25, 25, 25);
+    --input: rgb(255, 255, 255);
+    --ring: rgb(189, 16, 48);;
+    --card: rgb(44, 44, 44);
+    --card-foreground: rgb(255, 255, 255);
+    --card-border: rgb(55, 65, 81);
+    --card-header: rgb(255, 255, 255);
+    --card-muted: rgb(160, 160, 160);
+    --popover: rgb(0, 0, 0);
+    --popover-foreground: rgb(255, 255, 255);
+    --destructive: rgb(206, 22, 25);
+    --destructive-foreground: rgb(255, 255, 255);
+    --sidebar: rgb(0, 0, 0); 
+    --sidebar-foreground: rgb(149, 149, 149); 
+    --sidebar-accent: rgb(206, 22, 25);
+    --sidebar-accent-foreground: rgb(255, 255, 255);
   
-    --color-success: 11 160 0; 
-    --color-success-background: 4 54 0;
+    --success: rgb(11, 160, 0); 
+    --success-background: rgb(4, 54, 0);
+    --badge-success: rgb(34, 197, 94);
+    --badge-success-background: rgb(4, 54, 0);
+    --badge-error: rgb(248, 113, 113);
+    --badge-error-background: rgb(69, 10, 10);
+    --badge-warning: rgb(251, 191, 36);
+    --badge-warning-background: rgb(69, 26, 3);
+    --badge-info: rgb(96, 165, 250);
+    --badge-info-background: rgb(22, 49, 120);
+    --badge-secondary: rgb(160, 160, 160);
+    --badge-secondary-background: rgb(44, 44, 44);
+    --alert-success: rgb(34, 197, 94);
+    --alert-success-background: rgb(4, 54, 0);
+    --alert-success-border: rgb(34, 197, 94);
+    --alert-error: rgb(248, 113, 113);
+    --alert-error-background: rgb(69, 10, 10);
+    --alert-error-border: rgb(248, 113, 113);
+    --alert-warning: rgb(251, 191, 36);
+    --alert-warning-background: rgb(69, 26, 3);
+    --alert-warning-border: rgb(251, 191, 36);
+    --alert-info: rgb(96, 165, 250);
+    --alert-info-background: rgb(30, 58, 138);
+    --alert-info-border: rgb(96, 165, 250);
     --radius: 0.5rem;
-}
+  }
 
-/* Base styles */
-* {
-  border-color: rgb(var(--color-border));
-}
 
 body {
-  background-color: rgb(var(--color-background));
-  color: rgb(var(--color-foreground));
+  background-color: var(--background);
+  color: var(--foreground);
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
 /* Custom component styles */
-.card {
-  border-radius: 0.5rem;
-  border: 1px solid rgb(var(--color-border));
-  background-color: rgb(var(--color-card));
-  color: rgb(var(--color-card-foreground));
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-}
-
-.input {
-  display: flex;
-  height: 2.5rem;
-  width: 100%;
-  border-radius: 0.375rem;
-  border: 1px solid rgb(var(--color-input));
-  background-color: rgb(var(--color-background));
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  transition: colors 0.2s;
-}
-
-.input:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px rgb(var(--color-ring));
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: colors 0.2s;
-  background-color: rgb(var(--color-primary));
-  color: rgb(var(--color-primary-foreground));
-  height: 2.5rem;
-  padding: 0.5rem 1rem;
-}
-
-.btn-primary:hover {
-  background-color: rgb(var(--color-primary) / 0.9);
-}
-
-.btn-primary:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px rgb(var(--color-ring));
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: colors 0.2s;
-  border: 1px solid rgb(var(--color-input));
-  background-color: rgb(var(--color-background));
-  height: 2.5rem;
-  padding: 0.5rem 1rem;
-}
-
-.btn-secondary:hover {
-  background-color: rgb(var(--color-muted));
-  color: rgb(var(--color-muted-foreground));
-}
-
-.btn-secondary:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px rgb(var(--color-ring));
-}
 
 /* Smooth transitions for theme changes - only on specific elements */
 html {
@@ -170,9 +176,9 @@ button, input, select, textarea {
 
 /* Sidebar styles */
 .sidebar {
-  background-color: rgb(var(--color-sidebar));
-  color: rgb(var(--color-sidebar-foreground));
-  border-right: 1px solid rgb(var(--color-sidebar-border));
+  background-color: rgb(var(--sidebar));
+  color: rgb(var(--sidebar-foreground));
+  border-right: 1px solid rgb(var(--sidebar-border));
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
@@ -182,23 +188,23 @@ button, input, select, textarea {
   padding: 0.75rem 1rem;
   margin: 0.25rem 0.5rem;
   border-radius: 0.375rem;
-  color: rgb(var(--color-sidebar-foreground));
+  color: rgb(var(--sidebar-foreground));
   text-decoration: none;
   transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
 .sidebar-item:hover {
-  background-color: rgb(var(--color-sidebar-muted));
-  color: rgb(var(--color-sidebar-foreground));
+  background-color: rgb(var(--sidebar-muted));
+  color: rgb(var(--sidebar-foreground));
 }
 
 .sidebar-item.active {
-  background-color: rgb(var(--color-sidebar-accent));
-  color: rgb(var(--color-sidebar-accent-foreground));
+  background-color: rgb(var(--sidebar-accent));
+  color: rgb(var(--sidebar-accent-foreground));
 }
 
 .sidebar-item-muted {
-  color: rgb(var(--color-sidebar-muted-foreground));
+  color: rgb(var(--sidebar-muted-foreground));
   font-size: 0.875rem;
   padding: 0.5rem 1rem;
   margin: 0.25rem 0.5rem;
@@ -206,24 +212,24 @@ button, input, select, textarea {
 
 /* Menu bar styles */
 .menu-bar {
-  background-color: rgb(var(--color-menu-bar));
-  color: rgb(var(--color-menu-bar-foreground));
+  background-color: rgb(var(--menu-bar));
+  color: rgb(var(--menu-bar-foreground));
   padding: 0.5rem 1rem;
-  border-bottom: 1px solid rgb(var(--color-border));
+  border-bottom: 1px solid rgb(var(--border));
 }
 
 /* Header styles */
 .header {
-  background-color: rgb(var(--color-header));
-  color: rgb(var(--color-header-foreground));
+  background-color: rgb(var(--header));
+  color: rgb(var(--header-foreground));
   padding: 1rem;
-  border-bottom: 1px solid rgb(var(--color-border));
+  border-bottom: 1px solid rgb(var(--border));
 }
 
 /* Button styles matching the design */
 .btn-red {
-  background-color: rgb(var(--color-primary));
-  color: rgb(var(--color-primary-foreground));
+  background-color: rgb(var(--primary));
+  color: rgb(var(--primary-foreground));
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
@@ -232,13 +238,13 @@ button, input, select, textarea {
 }
 
 .btn-red:hover {
-  background-color: rgb(var(--color-primary) / 0.9);
+  background-color: rgb(var(--primary) / 0.9);
 }
 
 .btn-gray {
-  background-color: rgb(var(--color-secondary));
-  color: rgb(var(--color-secondary-foreground));
-  border: 1px solid rgb(var(--color-border));
+  background-color: rgb(var(--secondary));
+  color: rgb(var(--secondary-foreground));
+  border: 1px solid rgb(var(--border));
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   font-weight: 500;
@@ -246,13 +252,13 @@ button, input, select, textarea {
 }
 
 .btn-gray:hover {
-  background-color: rgb(var(--color-secondary) / 0.9);
+  background-color: rgb(var(--secondary) / 0.9);
 }
 
 /* Filter tag styles */
 .filter-tag {
-  background-color: rgb(var(--color-secondary));
-  color: rgb(var(--color-secondary-foreground));
+  background-color: rgb(var(--secondary));
+  color: rgb(var(--secondary-foreground));
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.875rem;
@@ -261,15 +267,15 @@ button, input, select, textarea {
 }
 
 .filter-tag.active {
-  background-color: rgb(var(--color-primary));
-  color: rgb(var(--color-primary-foreground));
+  background-color: rgb(var(--primary));
+  color: rgb(var(--primary-foreground));
 }
 
 /* Search bar styles */
 .search-bar {
-  background-color: rgb(var(--color-input));
-  color: rgb(var(--color-foreground));
-  border: 1px solid rgb(var(--color-border));
+  background-color: rgb(var(--input));
+  color: rgb(var(--foreground));
+  border: 1px solid rgb(var(--border));
   padding: 0.75rem 1rem;
   border-radius: 0.375rem;
   width: 100%;
@@ -278,18 +284,18 @@ button, input, select, textarea {
 
 .search-bar:focus {
   outline: none;
-  border-color: rgb(var(--color-ring));
-  box-shadow: 0 0 0 2px rgb(var(--color-ring) / 0.2);
+  border-color: rgb(var(--ring));
+  box-shadow: 0 0 0 2px rgb(var(--ring) / 0.2);
 }
 
 .search-bar::placeholder {
-  color: rgb(var(--color-muted-foreground));
+  color: rgb(var(--muted-foreground));
 }
 
 /* Success/status styles */
 .status-online {
-  background-color: rgb(var(--color-success-background));
-  color: rgb(var(--color-success));
+  background-color: rgb(var(--success-background));
+  color: rgb(var(--success));
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.875rem;

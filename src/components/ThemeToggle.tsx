@@ -52,7 +52,7 @@ const MonitorIcon = () => (
   </svg>
 );
 
-export default function ThemeToggle() {
+export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   const cycleTheme = () => {
