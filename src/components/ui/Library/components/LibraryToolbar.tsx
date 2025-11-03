@@ -13,7 +13,7 @@ export default function LibraryToolbar() {
           size="lg"
 
         />
-        <Button variant="solid" color="secondary" iconBefore={<Filter />}>
+        <Button variant="solid" color="secondary" iconBefore={<Filter size={16} />}>
           Filters
         </Button>
         <div className="flex gap-2">

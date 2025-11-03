@@ -29,8 +29,8 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
           isMenuOpen ? "w-64" : "w-20"
         }`}
       >
-        <nav className="flex-1 p-4 overflow-y-auto">
-          <ul className="space-y-2">
+        <nav className="flex-1 p-4">
+          <ul className={`${isMenuOpen ? "space-y-0" : "space-y-2"}`}>
             <li
               className={`mb-4 flex ${
                 isMenuOpen ? "justify-end" : "justify-center"
@@ -93,26 +93,29 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
           </ul>
         </nav>
 
-        <div className="p-4 w-full border-t border-border flex flex-col gap-4 items-center">
-          <Badge
-            color={mode === "online" ? "success" : "destructive"}
-            variant="outline"
-            size="sm"
-          >
-            {mode === "online" ? "Online" : "Offline"}
-          </Badge>
-
+        <div className="p-4 w-full border-t border-border flex flex-col gap-2 items-center">
           {isMenuOpen && (
-            <Card size="sm" className="bg-background" variant="flat">
-              <CardHeader>Library Stats</CardHeader>
-              <CardContent className="space-y-1 text-xs text-muted-foreground">
+            <Card
+              size="xs"
+              className="bg-background"
+              variant="flat"
+              header={{ title: "Library Stats" }}
+            >
+              <CardContent className="text-xs text-muted-foreground">
                 <p>Total Tracks: 1,247</p>
                 <p>Total Duration: 82h 15m</p>
                 <p>Genres: 24</p>
               </CardContent>
             </Card>
           )}
-          <div className="flex justify-center">
+          <div className="flex gap-2 justify-center">
+            <Badge
+              color={mode === "online" ? "success" : "destructive"}
+              variant="outline"
+              size="sm"
+            >
+              {mode === "online" ? "Online" : "Offline"}
+            </Badge>
             <ThemeToggle />
           </div>
         </div>

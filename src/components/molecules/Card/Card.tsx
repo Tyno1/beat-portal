@@ -1,7 +1,7 @@
 import React from "react";
 
 export type CardVariant = "default" | "outlined" | "elevated" | "flat";
-export type CardSize = "sm" | "md" | "lg";
+export type CardSize = "xs" | "sm" | "md" | "lg";
 export type CardRadius = "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
 
 export interface CardHeaderConfig {
@@ -22,11 +22,13 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 	children: React.ReactNode;
 	className?: string;
+	size?: CardSize;
 }
 
 export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
 	children: React.ReactNode;
 	className?: string;
+	size?: CardSize;
 }
 
 export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -44,6 +46,8 @@ export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraph
 	children: React.ReactNode;
 	className?: string;
 }
+
+const CardContext = React.createContext<{ size: CardSize }>({ size: "md" });
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
 	({ variant = "default", size = "md", radius = "md", children, className = "", header, ...props }, ref) => {
@@ -68,6 +72,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 		};
 
 		const sizeClasses = {
+			xs: "p-0",
 			sm: "p-3",
 			md: "p-4",
 			lg: "p-6",
@@ -84,28 +89,41 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 			.join(" ");
 
 		return (
-			<div ref={ref} className={cardClasses} {...props}>
-				{header && (
-					<CardHeader>
-						<div className="flex items-center justify-between">
-							<div>
-								{header.title && <CardTitle>{header.title}</CardTitle>}
-								{header.description && <CardDescription>{header.description}</CardDescription>}
+			<CardContext.Provider value={{ size }}>
+				<div ref={ref} className={cardClasses} {...props}>
+					{header && (
+						<CardHeader size={size}>
+							<div className="flex items-center justify-between mx-auto mb-2">
+								<div>
+									{header.title && <CardTitle>{header.title}</CardTitle>}
+									{header.description && <CardDescription>{header.description}</CardDescription>}
+								</div>
+								{header.button && <div>{header.button}</div>}
 							</div>
-							{header.button && <div>{header.button}</div>}
-						</div>
-					</CardHeader>
-				)}
-				{children}
-			</div>
+						</CardHeader>
+					)}
+					{children}
+				</div>
+			</CardContext.Provider>
 		);
 	},
 );
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-	({ children, className = "", ...props }, ref) => {
+	({ children, className = "", size, ...props }, ref) => {
+		const context = React.useContext(CardContext);
+		const finalSize = size ?? context.size;
+
+		const sizeClasses: Record<CardSize, string> = {
+			xs: "p-1",
+			sm: "p-3",
+			md: "p-4",
+			lg: "p-6",
+		};
+
 		const headerClasses = [
-			"flex flex-col space-y-1.5 p-6",
+			"flex flex-col space-y-1.5",
+			sizeClasses[finalSize],
 			className,
 		]
 			.filter(Boolean)
@@ -120,9 +138,19 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
 );
 
 const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
-	({ children, className = "", ...props }, ref) => {
+	({ children, className = "", size, ...props }, ref) => {
+		const context = React.useContext(CardContext);
+		const finalSize = size ?? context.size;
+
+		const sizeClasses: Record<CardSize, string> = {
+			xs: "p-1 pt-0",
+			sm: "p-3 pt-0",
+			md: "p-4 pt-0",
+			lg: "p-6 pt-0",
+		};
+
 		const contentClasses = [
-			"p-6 pt-0",
+			sizeClasses[finalSize],
 			className,
 		]
 			.filter(Boolean)

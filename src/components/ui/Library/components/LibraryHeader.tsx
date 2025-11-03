@@ -9,7 +9,7 @@ export default function LibraryHeader() {
         <Button
           variant="solid"
           color="secondary"
-          iconBefore={<Download />}
+          iconBefore={<Download size={16} />}
           size="sm"
         >
           Import Music
@@ -17,7 +17,7 @@ export default function LibraryHeader() {
         <Button
           variant="solid"
           color="primary"
-          iconBefore={<Upload />}
+          iconBefore={<Upload size={16} />}
           size="sm"
         >
           Export Playlist
