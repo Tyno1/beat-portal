@@ -1,4 +1,5 @@
 import { PanelLeft } from "lucide-react";
+import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Badge, IconButton, ThemeToggle } from "../atoms";
 import { Card, CardContent, CardHeader } from "../molecules";
@@ -15,22 +16,43 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
   const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [mode, _setMode] = useState<"online" | "offline">("online");
 
+  const handleToggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      <aside className="w-64 bg-sidebar border border-border flex flex-col m-4 rounded-4xl relative">
-
-        <IconButton variant="ghost" size="sm" icon={<PanelLeft />} aria-label="Open menu" className="absolute top-4 right-4" />
-
-        <nav className="flex-1 p-4 overflow-y-auto mt-10">
-          <ul className="space-y-1">
+      <aside
+        className={`bg-sidebar border border-border flex flex-col m-4 rounded-4xl ${
+          isMenuOpen ? "w-64" : "w-20"
+        }`}
+      >
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <ul className="space-y-2">
+            <li
+              className={`mb-4 flex ${
+                isMenuOpen ? "justify-end" : "justify-center"
+              }`}
+            >
+              <IconButton
+                onClick={handleToggleMenu}
+                variant="ghost"
+                color="secondary"
+                size="sm"
+                icon={<PanelLeft />}
+                aria-label="Open menu"
+              />
+            </li>
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
-              return (
-                <li key={item.path}>
-                  <Link
-                    to={item.path}
-                    className={`
+              if (isMenuOpen)
+                return (
+                  <li key={item.path}>
+                    <Link
+                      to={item.path}
+                      className={`
                       flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200
                       ${
                         isActive
@@ -38,48 +60,67 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
                           : "text-sidebar-foreground-muted hover:bg-sidebar-accent/30"
                       }
                     `}
-                  >
-                    <div
-                      className={`rounded-lg p-1 ${
+                    >
+                      <div
+                        className={`rounded-lg p-1 ${
+                          isActive
+                            ? "bg-sidebar-foreground text-sidebar"
+                            : "bg-sidebar-accent-foreground text-background"
+                        } `}
+                      >
+                        {item.icon}
+                      </div>
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                );
+              else
+                return (
+                  <li key={item.path}>
+                    <Link
+                      to={item.path}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200 ${
                         isActive
                           ? "bg-sidebar-foreground text-sidebar"
                           : "bg-sidebar-accent-foreground text-background"
-                      } `}
+                      }`}
                     >
                       {item.icon}
-                    </div>
-                    <span>{item.label}</span>
-                  </Link>
-                </li>
-              );
+                    </Link>
+                  </li>
+                );
             })}
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-border flex flex-col gap-4 items-center">
-          <Badge color="success" variant="outline" size="sm">
-            Offline Mode
+        <div className="p-4 w-full border-t border-border flex flex-col gap-4 items-center">
+          <Badge
+            color={mode === "online" ? "success" : "destructive"}
+            variant="outline"
+            size="sm"
+          >
+            {mode === "online" ? "Online" : "Offline"}
           </Badge>
 
-          <Card size="sm">
-            <CardHeader>Library Stats</CardHeader>
-            <CardContent className="space-y-1 text-xs text-muted-foreground">
-              <p>Total Tracks: 1,247</p>
-              <p>Total Duration: 82h 15m</p>
-              <p>Genres: 24</p>
-            </CardContent>
-          </Card>
-
+          {isMenuOpen && (
+            <Card size="sm" className="bg-background" variant="flat">
+              <CardHeader>Library Stats</CardHeader>
+              <CardContent className="space-y-1 text-xs text-muted-foreground">
+                <p>Total Tracks: 1,247</p>
+                <p>Total Duration: 82h 15m</p>
+                <p>Genres: 24</p>
+              </CardContent>
+            </Card>
+          )}
           <div className="flex justify-center">
             <ThemeToggle />
           </div>
         </div>
       </aside>
-
-      {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
         <Outlet />
       </main>
+      ;
     </div>
   );
 }

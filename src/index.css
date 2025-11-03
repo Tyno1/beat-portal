@@ -11,6 +11,7 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-input-foreground: var(--input-foreground);
   --color-ring: var(--ring);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -51,6 +52,7 @@
   --muted-foreground: rgb(68, 68, 68);
   --border: rgb(234, 236, 240);
   --input: rgb(217, 217, 217);
+  --input-foreground: rgb(255, 255, 255);
   --ring: rgb(189, 16, 48);;
   --card: rgb(255, 255, 255);
   --card-foreground: rgb(68, 68, 68);
@@ -106,6 +108,7 @@
     --muted-foreground: rgb(194, 194, 194);
     --border: rgb(25, 25, 25);
     --input: rgb(255, 255, 255);
+    --input-foreground: rgb(0, 0, 0);
     --ring: rgb(189, 16, 48);;
     --card: rgb(0, 0, 0);
     --card-foreground: rgb(255, 255, 255);

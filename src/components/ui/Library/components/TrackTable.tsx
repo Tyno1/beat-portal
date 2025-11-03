@@ -139,6 +139,7 @@ export default function TrackTable({ data }: TrackTableProps) {
 				<IconButton
 					icon={<MoreVertical />}
 					aria-label="Actions"
+					color="primary"
 					variant="ghost"
 					size="sm"
 				/>

@@ -4,6 +4,7 @@ export type {
 	CardFooterProps,
 	CardHeaderProps,
 	CardProps,
+	CardRadius,
 	CardSize,
 	CardTitleProps,
 	CardVariant,

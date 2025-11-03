@@ -44,18 +44,8 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
 					};
 					return `border ${borderColors[color]}`;
 				}
-				case "dot": {
-					const dotColors = {
-						primary: "bg-primary",
-						secondary: "bg-secondary",
-						destructive: "bg-destructive",
-						success: "bg-badge-success",
-						info: "bg-badge-info",
-						warning: "bg-badge-warning",
-						muted: "bg-muted",
-					};
+				case "dot":
 					return `${colorClasses[color]} relative`;
-				}
 				default:
 					return colorClasses.primary;
 			}

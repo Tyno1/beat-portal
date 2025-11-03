@@ -2,6 +2,7 @@ import React from "react";
 
 export type CardVariant = "default" | "outlined" | "elevated" | "flat";
 export type CardSize = "sm" | "md" | "lg";
+export type CardRadius = "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
 
 export interface CardHeaderConfig {
 	title?: string;
@@ -12,6 +13,7 @@ export interface CardHeaderConfig {
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	variant?: CardVariant;
 	size?: CardSize;
+	radius?: CardRadius;
 	children: React.ReactNode;
 	className?: string;
 	header?: CardHeaderConfig;
@@ -44,8 +46,19 @@ export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraph
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-	({ variant = "default", size = "md", children, className = "", header, ...props }, ref) => {
-		const baseClasses = "rounded-lg bg-card text-card-foreground transition-colors";
+	({ variant = "default", size = "md", radius = "md", children, className = "", header, ...props }, ref) => {
+		const baseClasses = "bg-card text-card-foreground transition-colors";
+
+		const radiusClasses: Record<CardRadius, string> = {
+			none: "rounded-none",
+			sm: "rounded-sm",
+			md: "rounded-md",
+			lg: "rounded-lg",
+			xl: "rounded-xl",
+			"2xl": "rounded-2xl",
+			"3xl": "rounded-3xl",
+			full: "rounded-full",
+		};
 
 		const variantClasses = {
 			default: "shadow-sm",
@@ -62,6 +75,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 
 		const cardClasses = [
 			baseClasses,
+			radiusClasses[radius],
 			variantClasses[variant],
 			sizeClasses[size],
 			className,

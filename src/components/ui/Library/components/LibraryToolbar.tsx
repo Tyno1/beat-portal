@@ -9,21 +9,25 @@ export default function LibraryToolbar() {
           placeholder="Search Tracks, year, artists or genre..."
           leftIcon={<Search />}
           containerClassName="flex-1 rounded-full"
-          variant="filled"
+          variant="alt"
+          size="lg"
+
         />
         <Button variant="solid" color="secondary" iconBefore={<Filter />}>
           Filters
         </Button>
         <div className="flex gap-2">
           <IconButton
-            icon={<Grid3x3 />}
+            icon={<Grid3x3 size={20} />}
             aria-label="Grid view"
-            variant="primary"
+            color="primary"
+            variant="solid"
           />
           <IconButton
-            icon={<List />}
+            icon={<List size={20} />}
             aria-label="List view"
-            variant="secondary"
+            color="secondary"
+            variant="solid"
           />
         </div>
       </div>
