@@ -57,14 +57,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		const inputId = id || `input-${Math.random().toString(36).substring(2, 11)}`;
 
 		const baseClasses =
-			"flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors";
+			"flex w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-colors";
 
 		const variantClasses = {
-			default: "bg-input border-input-border focus:border-input-focus-border",
-			filled: "bg-input border-transparent focus:border-input-focus-border",
-			outline: "bg-transparent border-input-border focus:border-input-focus-border",
-			ghost: "bg-transparent border-transparent focus:bg-input",
-			alt: "bg-input-foreground border-input-foreground-border focus:border-input-foreground-focus-border",
+			default: "bg-input border-input-border focus-visible:border-transparent",
+			filled: "bg-input border-transparent focus-visible:border-transparent",
+			outline: "bg-transparent border-input-border focus-visible:border-transparent",
+			ghost: "bg-transparent border-transparent focus-visible:bg-input",
+			alt: "bg-input-foreground border-input-foreground-border focus-visible:border-transparent",
 		};
 
 		const sizeClasses = {
@@ -83,7 +83,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			baseClasses,
 			variantClasses[variant],
 			sizeClasses[size],
-			error ? "border-destructive focus:border-destructive" : "",
+			error ? "border-destructive focus-visible:border-destructive focus-visible:ring-destructive" : "",
 			leftIcon ? "pl-10" : "",
 			rightIcon || loading ? "pr-10" : "",
 			className,

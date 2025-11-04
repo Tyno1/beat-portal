@@ -14,9 +14,9 @@ const playlists: PlaylistCard[] = [
 
 export default function Playlists() {
 	return (
-		<div className="p-8 overflow-y-auto h-full">
+		<div className="py-4 pr-4 overflow-y-auto h-full">
 			<PageHeader title="Playlists" />
-			<div className="grid grid-cols-3 gap-6">
+			<div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
 				{playlists.map((playlist) => (
 					<Card key={playlist.title} className="cursor-pointer hover:shadow-lg transition-shadow">
 						<div className="w-full h-48 bg-primary rounded-lg flex items-center justify-center mb-4">

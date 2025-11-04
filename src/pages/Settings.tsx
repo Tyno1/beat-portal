@@ -4,15 +4,12 @@ import { Card, PageHeader } from "../components/molecules";
 
 export default function Settings() {
 	return (
-		<div className="p-8 overflow-y-auto h-full">
+		<div className="py-4 pr-4 overflow-y-auto h-full">
 			<PageHeader title="Settings" />
 
 			<div className="space-y-6">
 				{/* Default Music Folder */}
 				<Card className="p-6">
-					<h2 className="text-xl font-semibold text-foreground mb-4">
-						Settings
-					</h2>
 					<div>
 						<label
 							htmlFor="music-folder"
@@ -30,8 +27,9 @@ export default function Settings() {
 							<Button
 								variant="outline"
 								color="secondary"
-								iconBefore={<FolderOpen />}
+								iconBefore={<FolderOpen size={16} />}
 								radius="md"
+								size="sm"
 							>
 								Browse
 							</Button>

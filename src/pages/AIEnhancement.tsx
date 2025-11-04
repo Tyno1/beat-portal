@@ -3,14 +3,14 @@ import { Badge, Button } from "../components/atoms";
 
 export default function AIEnhancement() {
 	return (
-		<div className="p-8 overflow-y-auto h-full">
+		<div className="py-4 pr-4 overflow-y-auto h-full">
 			{/* Header Section */}
 			<div className="flex items-center gap-4 mb-8">
 				<div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center">
 					<Zap className="w-8 h-8 text-white" />
 				</div>
-				<div>
-					<h1 className="text-3xl font-bold text-foreground">
+				<div className="flex-1">
+					<h1 className="text-xl lg:text-3xl font-bold text-foreground">
 						AI Metadata Enhancement
 					</h1>
 					<p className="text-sm text-muted-foreground mt-1">

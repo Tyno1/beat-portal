@@ -3,7 +3,7 @@ import { Card, PageHeader } from "../components/molecules";
 
 export default function Analysis() {
 	return (
-		<div className="p-8 overflow-y-auto h-full">
+		<div className="py-4 pr-4 overflow-y-auto h-full">
 			<PageHeader title="Analysis" />
 
 			{/* Stats Grid */}

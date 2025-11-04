@@ -2,7 +2,7 @@ import { PanelLeft } from "lucide-react";
 import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Badge, IconButton, ThemeToggle } from "../atoms";
-import { Card, CardContent, CardHeader } from "../molecules";
+import { Card, CardContent } from "../molecules";
 
 interface NavItem {
   path: string;
@@ -38,11 +38,12 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
             >
               <IconButton
                 onClick={handleToggleMenu}
-                variant="ghost"
+                variant="plain"
                 color="secondary"
                 size="sm"
                 icon={<PanelLeft />}
                 aria-label="Open menu"
+                className="text-sidebar-foreground-muted hover:text-sidebar-foreground"
               />
             </li>
             {navItems.map((item) => {
@@ -108,7 +109,7 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
               </CardContent>
             </Card>
           )}
-          <div className="flex gap-2 justify-center">
+          <div className="flex flex-wrap gap-2 items-center justify-center">
             <Badge
               color={mode === "online" ? "success" : "destructive"}
               variant="outline"
@@ -120,10 +121,9 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
           </div>
         </div>
       </aside>
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden ">
         <Outlet />
       </main>
-      ;
     </div>
   );
 }

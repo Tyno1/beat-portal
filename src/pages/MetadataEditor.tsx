@@ -4,7 +4,7 @@ import { Card, CardContent, PageHeader } from "../components/molecules";
 
 export default function MetadataEditor() {
   return (
-    <Card size="lg" radius="3xl" className="mt-8 mr-4 p-8 overflow-y-auto">
+    <Card size="lg" radius="3xl" className="mt-4 mr-4 overflow-y-auto">
       <CardContent>
           <PageHeader title="Metadata Editor" />
           <div className="grid grid-cols-2 gap-6">

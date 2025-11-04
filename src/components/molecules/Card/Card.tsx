@@ -40,11 +40,13 @@ export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement>
 	children: React.ReactNode;
 	className?: string;
 	as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+	size?: CardSize;
 }
 
 export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
 	children: React.ReactNode;
 	className?: string;
+	size?: CardSize;
 }
 
 const CardContext = React.createContext<{ size: CardSize }>({ size: "md" });
@@ -95,8 +97,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 						<CardHeader size={size}>
 							<div className="flex items-center justify-between mx-auto mb-2">
 								<div>
-									{header.title && <CardTitle>{header.title}</CardTitle>}
-									{header.description && <CardDescription>{header.description}</CardDescription>}
+									{header.title && <CardTitle size={size}>{header.title}</CardTitle>}
+									{header.description && <CardDescription size={size}>{header.description}</CardDescription>}
 								</div>
 								{header.button && <div>{header.button}</div>}
 							</div>
@@ -182,9 +184,20 @@ const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
 );
 
 const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
-	({ children, className = "", as: Component = "h3", ...props }, ref) => {
+	({ children, className = "", as: Component = "h3", size, ...props }, ref) => {
+		const context = React.useContext(CardContext);
+		const finalSize = size ?? context.size;
+
+		const sizeClasses: Record<CardSize, string> = {
+			xs: "text-xs",
+			sm: "text-sm",
+			md: "text-lg",
+			lg: "text-xl",
+		};
+
 		const titleClasses = [
-			"text-lg font-semibold leading-none tracking-tight text-card-header",
+			"font-semibold leading-none tracking-tight text-card-header",
+			sizeClasses[finalSize],
 			className,
 		]
 			.filter(Boolean)
@@ -199,9 +212,20 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
 );
 
 const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
-	({ children, className = "", ...props }, ref) => {
+	({ children, className = "", size, ...props }, ref) => {
+		const context = React.useContext(CardContext);
+		const finalSize = size ?? context.size;
+
+		const sizeClasses: Record<CardSize, string> = {
+			xs: "text-xs",
+			sm: "text-xs",
+			md: "text-sm",
+			lg: "text-base",
+		};
+
 		const descriptionClasses = [
-			"text-sm text-card-muted",
+			"text-card-muted",
+			sizeClasses[finalSize],
 			className,
 		]
 			.filter(Boolean)

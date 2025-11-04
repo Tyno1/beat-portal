@@ -1,4 +1,3 @@
-
 // Alert component
 export type { AlertProps, AlertSize, AlertVariant } from "./Alert";
 export { Alert } from "./Alert";
@@ -26,3 +25,7 @@ export {
 
 // PageHeader component
 export { PageHeader } from "./PageHeader";
+
+// Popover component
+export type { PopoverPlacement, PopoverProps, PopoverVariant } from "./Popover";
+export { Popover } from "./Popover";
