@@ -14,6 +14,14 @@ export type { InputProps, InputSize, InputType, InputVariant } from "./Input";
 export { Input } from "./Input";
 // Loading component
 export { LoadingSpinner } from "./LoadingSpinner";
+// Select component
+export type {
+	SelectOption,
+	SelectProps,
+	SelectSize,
+	SelectVariant,
+} from "./Select";
+export { default as Select } from "./Select";
 // Types
 export type {
 	BaseButtonProps,

@@ -64,10 +64,10 @@
   --destructive: rgb(189, 16, 48);
   --destructive-foreground: rgb(255, 255, 255);
   --sidebar: rgb(255, 255, 255); 
-  --sidebar-foreground: rgb(189, 16, 48);
+  --sidebar-foreground: rgb(0, 0, 0); 
   --sidebar-foreground-muted: rgb(68, 68, 68); 
-  --sidebar-accent: rgb(241, 225, 225);
-  --sidebar-accent-foreground: rgb(68, 68, 68);
+  --sidebar-accent: rgb(189, 16, 48);
+  --sidebar-accent-foreground: rgb(255, 255, 255);
 
   --success: rgb(7, 102, 1);
   --success-background: rgb(221, 252, 219);
@@ -121,9 +121,9 @@
     --destructive-foreground: rgb(255, 255, 255);
     --sidebar: rgb(0, 0, 0); 
     --sidebar-foreground: rgb(255, 255, 255);
-    --sidebar-foreground-muted: rgb(149, 149, 149); 
+    --sidebar-foreground-muted: rgb(54, 54, 54); 
     --sidebar-accent: rgb(206, 22, 25);
-    --sidebar-accent-foreground: rgb(194, 194, 194);
+    --sidebar-accent-foreground: rgb(255, 255, 255);
   
     --success: rgb(11, 160, 0); 
     --success-background: rgb(4, 54, 0);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterChips from "../components/ui/Library/components/FilterChips";
 import LibraryHeader from "../components/ui/Library/components/LibraryHeader";
 import LibraryToolbar, {
@@ -8,6 +8,7 @@ import TrackGrid from "../components/ui/Library/components/TrackGrid";
 import TrackTable, {
 	type Track,
 } from "../components/ui/Library/components/TrackTable";
+import useResize from "../hooks/useResize";
 
 const mockTracks: Track[] = [
 	{
@@ -164,11 +165,79 @@ const mockTracks: Track[] = [
 
 export default function Library() {
 	const [viewMode, setViewMode] = useState<ViewMode>("table");
-	const [activeFilter, setActiveFilter] = useState<string>("All Tracks");
+	const [selectedFilters, setSelectedFilters] = useState<{
+		[key: string]: string[];
+	}>({});
 	const [filteredData, setFilteredData] = useState<Track[]>(mockTracks);
+	const { breakpoint, size } = useResize();
 
-	const handleFilterChange = (filterLabel: string) => {
-		setActiveFilter(filterLabel);
+	const handleFilterChange = (category: string, selectedValues: string[]) => {
+		setSelectedFilters((prev) => ({
+			...prev,
+			[category]: selectedValues,
+		}));
+	};
+
+	// Apply filters whenever selectedFilters or mockTracks change
+	useEffect(() => {
+		let filtered: Track[] = [...mockTracks];
+
+		// Filter by genre
+		if (selectedFilters.genre && selectedFilters.genre.length > 0) {
+			filtered = filtered.filter((track) =>
+				selectedFilters.genre.includes(track.genre),
+			);
+		}
+
+		// Filter by mood
+		if (selectedFilters.mood && selectedFilters.mood.length > 0) {
+			filtered = filtered.filter((track) =>
+				selectedFilters.mood.includes(track.mood),
+			);
+		}
+
+		// Filter by key
+		if (selectedFilters.key && selectedFilters.key.length > 0) {
+			filtered = filtered.filter((track) =>
+				selectedFilters.key.includes(track.key),
+			);
+		}
+
+		// Filter by artist
+		if (selectedFilters.artist && selectedFilters.artist.length > 0) {
+			filtered = filtered.filter((track) =>
+				selectedFilters.artist.includes(track.artist),
+			);
+		}
+
+		// Filter by BPM range
+		if (selectedFilters.bpm && selectedFilters.bpm.length > 0) {
+			filtered = filtered.filter((track) => {
+				return selectedFilters.bpm.some((range) => {
+					const [min, max] = range.replace(" BPM", "").split("-").map(Number);
+					return track.bpm >= min && track.bpm <= max;
+				});
+			});
+		}
+
+		// Filter by year range
+		if (selectedFilters.year && selectedFilters.year.length > 0) {
+			filtered = filtered.filter((track) => {
+				return selectedFilters.year.some((range) => {
+					const decade = parseInt(range.replace("s", ""), 10);
+					const yearStart = decade;
+					const yearEnd = decade + 9;
+					return track.year >= yearStart && track.year <= yearEnd;
+				});
+			});
+		}
+
+		setFilteredData(filtered);
+	}, [selectedFilters]);
+
+	const handleFilterChangeLegacy = (filterLabel: string) => {
+		// Legacy handler for filter chips - keeping for backward compatibility
+		setSelectedFilters({});
 
 		let filtered: Track[] = [];
 
@@ -188,18 +257,14 @@ export default function Library() {
 				filtered = mockTracks.filter((track) => track.genre === "Blues");
 				break;
 			case "Recently Added": {
-				// For now, show tracks from 2020 onwards (as a placeholder)
-				// In a real app, you'd have a dateAdded field
 				filtered = mockTracks.filter((track) => track.year >= 2020);
 				break;
 			}
 			default: {
-				// Check if it's a genre
 				const genreMatch = mockTracks.find((track) => track.genre === filterLabel);
 				if (genreMatch) {
 					filtered = mockTracks.filter((track) => track.genre === filterLabel);
 				} else {
-					// Check if it's a mood
 					const moodMatch = mockTracks.find((track) => track.mood === filterLabel);
 					if (moodMatch) {
 						filtered = mockTracks.filter((track) => track.mood === filterLabel);
@@ -217,35 +282,49 @@ export default function Library() {
 	const filterChips = [
 		{
 			label: "All Tracks",
-			active: activeFilter === "All Tracks",
-			onClick: () => handleFilterChange("All Tracks"),
+			active: Object.keys(selectedFilters).length === 0,
+			onClick: () => handleFilterChangeLegacy("All Tracks"),
 		},
 		{
 			label: "120 - 128 Bpm",
-			active: activeFilter === "120 - 128 Bpm",
-			onClick: () => handleFilterChange("120 - 128 Bpm"),
+			active: false,
+			onClick: () => handleFilterChangeLegacy("120 - 128 Bpm"),
 		},
 		{
 			label: "Sad",
-			active: activeFilter === "Sad",
-			onClick: () => handleFilterChange("Sad"),
+			active: false,
+			onClick: () => handleFilterChangeLegacy("Sad"),
 		},
 		{
 			label: "Blues",
-			active: activeFilter === "Blues",
-			onClick: () => handleFilterChange("Blues"),
+			active: false,
+			onClick: () => handleFilterChangeLegacy("Blues"),
 		},
 		{
 			label: "Recently Added",
-			active: activeFilter === "Recently Added",
-			onClick: () => handleFilterChange("Recently Added"),
+			active: false,
+			onClick: () => handleFilterChangeLegacy("Recently Added"),
 		},
 	];
+
+	useEffect(() => {
+		if (breakpoint === "sm" || size < 900) {
+			setViewMode("grid");
+		} else {
+			setViewMode("table");
+		}
+	}, [breakpoint, size]);
 
 	return (
 		<div className="py-4 pr-4 overflow-y-auto h-full w-full">
 			<LibraryHeader />
-			<LibraryToolbar viewMode={viewMode} onViewChange={setViewMode} />
+			<LibraryToolbar
+				viewMode={viewMode}
+				onViewChange={setViewMode}
+				tracks={mockTracks}
+				selectedFilters={selectedFilters}
+				onFilterChange={handleFilterChange}
+			/>
 			<div className="my-8">
 				<FilterChips chips={filterChips} />
 			</div>

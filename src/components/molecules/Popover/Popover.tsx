@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { ButtonColor, ButtonRadius } from "../../atoms/types";
+import Button from "../../atoms/Button/Button";
+import type { ButtonColor, ButtonRadius, ButtonSize, ButtonVariant } from "../../atoms/types";
 
 export type PopoverVariant = "default" | "glass";
 export type PopoverPlacement =
@@ -19,6 +20,7 @@ export type PopoverPlacement =
 export interface PopoverProps {
 	children: React.ReactNode;
 	trigger: React.ReactNode;
+	// Popover content props
 	color?: ButtonColor;
 	variant?: PopoverVariant;
 	radius?: ButtonRadius;
@@ -28,9 +30,14 @@ export interface PopoverProps {
 	className?: string;
 	contentClassName?: string;
 	offset?: number;
+	// Button trigger props
+	buttonVariant?: ButtonVariant;
+	buttonColor?: ButtonColor;
+	buttonSize?: ButtonSize;
+	buttonRadius?: ButtonRadius;
 }
 
-const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
+	const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
 	(
 		{
 			children,
@@ -44,6 +51,10 @@ const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
 			className = "",
 			contentClassName = "",
 			offset = 8,
+			buttonVariant = "solid",
+			buttonColor = "primary",
+			buttonSize = "md",
+			buttonRadius = "xl",
 			...props
 		},
 		ref,
@@ -51,7 +62,7 @@ const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
 		const [internalOpen, setInternalOpen] = useState(false);
 		const isControlled = controlledOpen !== undefined;
 		const open = isControlled ? controlledOpen : internalOpen;
-		const triggerRef = useRef<HTMLButtonElement>(null);
+		const triggerRef = useRef<HTMLDivElement>(null);
 		const popoverRef = useRef<HTMLDivElement>(null);
 		const [position, setPosition] = useState({ top: 0, left: 0 });
 
@@ -94,7 +105,7 @@ const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
 
 		const getVariantClasses = (): string => {
 			if (variant === "glass") {
-				return `backdrop-blur-md border border-white/20 ${getGlassColorClasses()}`;
+				return `backdrop-blur-xl border border-white/20 ${getGlassColorClasses()}`;
 			}
 			return `${getDefaultColorClasses()} shadow-lg`;
 		};
@@ -217,17 +228,20 @@ const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
 				className={`relative inline-block ${className}`}
 				{...props}
 			>
-				<button
-					ref={triggerRef}
-					type="button"
-					onClick={handleToggle}
-					onKeyDown={handleKeyDown}
-					aria-expanded={open}
-					aria-haspopup="true"
-					className="inline-block cursor-pointer bg-transparent border-none p-0 m-0 appearance-none focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-				>
-					{trigger}
-				</button>
+				<div ref={triggerRef}>
+					<Button
+						variant={buttonVariant}
+						color={buttonColor}
+						size={buttonSize}
+						radius={buttonRadius}
+						onClick={handleToggle}
+						onKeyDown={handleKeyDown}
+						aria-expanded={open}
+						aria-haspopup="true"
+					>
+						{trigger}
+					</Button>
+				</div>
 				{open && (
 					<div
 						ref={popoverRef}

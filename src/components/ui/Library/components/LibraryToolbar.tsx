@@ -1,20 +1,28 @@
 import { Filter, Grid3x3, List, Search } from "lucide-react";
-import { useState } from "react";
-import { Button, IconButton, Input } from "../../../atoms";
+import { IconButton, Input } from "../../../atoms";
 import { Popover } from "../../../molecules";
+import FilterTray from "./FilterTray";
+import type { Track } from "./TrackTable";
 
 export type ViewMode = "table" | "grid";
 
 interface LibraryToolbarProps {
 	viewMode: ViewMode;
 	onViewChange: (view: ViewMode) => void;
+	tracks: Track[];
+	selectedFilters: {
+		[key: string]: string[];
+	};
+	onFilterChange: (category: string, selectedValues: string[]) => void;
 }
 
 export default function LibraryToolbar({
 	viewMode,
 	onViewChange,
+	tracks,
+	selectedFilters,
+	onFilterChange,
 }: LibraryToolbarProps) {
-
 	return (
 		<div className="space-y-3 mb-4 px-2">
 			<div className="flex gap-3 items-center">
@@ -25,16 +33,28 @@ export default function LibraryToolbar({
 					variant="alt"
 					size="lg"
 				/>
-				
-        <Popover variant="glass" trigger={<Button variant="solid" color="secondary" iconBefore={<Filter size={16} />}>Filters</Button>}>
-          <div>
-            <h3 className="text-lg font-semibold">Filters</h3>
-            <div className="flex gap-2">
-              <Button variant="solid" color="secondary">All</Button>
-              <Button variant="solid" color="secondary">120 - 128 Bpm</Button>
-            </div>
-          </div>
-        </Popover>
+
+				<Popover
+					placement="bottom-end"
+					buttonVariant="solid"
+					buttonColor="secondary"
+          color="muted"
+					buttonSize="md"
+					buttonRadius="xl"
+					variant="glass"
+					trigger={
+						<span className="flex items-center gap-2">
+							<Filter size={16} /> Filters
+						</span>
+					}
+          contentClassName="w-[60vw]"
+				>
+					<FilterTray
+						tracks={tracks}
+						selectedFilters={selectedFilters}
+						onFilterChange={onFilterChange}
+					/>
+				</Popover>
 				<div className="flex gap-2">
 					<IconButton
 						icon={<Grid3x3 size={20} />}

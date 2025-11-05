@@ -1,6 +1,7 @@
 import { PanelLeft } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import useResize from "../../hooks/useResize";
 import { Badge, IconButton, ThemeToggle } from "../atoms";
 import { Card, CardContent } from "../molecules";
 
@@ -18,10 +19,21 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const [mode, _setMode] = useState<"online" | "offline">("online");
+  const { breakpoint, size} = useResize();
+  console.log(breakpoint, size);
 
   const handleToggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    if (breakpoint === "md" || size < 1045) {
+      setIsMenuOpen(false);
+    } else {
+      setIsMenuOpen(true);
+    }
+  }, [breakpoint, size]);
+
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
       <aside
@@ -43,7 +55,7 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
                 size="sm"
                 icon={<PanelLeft />}
                 aria-label="Open menu"
-                className="text-sidebar-foreground-muted hover:text-sidebar-foreground"
+                className="text-sidebar-foreground hover:text-sidebar-accent"
               />
             </li>
             {navItems.map((item) => {
@@ -57,16 +69,16 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
                       flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200
                       ${
                         isActive
-                          ? "bg-sidebar-accent text-sidebar-foreground font-medium"
-                          : "text-sidebar-foreground-muted hover:bg-sidebar-accent/30"
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                          : "text-sidebar-foreground hover:bg-sidebar-accent/30"
                       }
                     `}
                     >
                       <div
                         className={`rounded-lg p-1 ${
                           isActive
-                            ? "bg-sidebar-foreground text-sidebar"
-                            : "bg-sidebar-accent-foreground text-background"
+                            ? "bg-sidebar-accent-foreground text-sidebar-foreground-muted"
+                            : "bg-sidebar-foreground text-background"
                         } `}
                       >
                         {item.icon}
@@ -82,8 +94,8 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
                       to={item.path}
                       className={`flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200 ${
                         isActive
-                          ? "bg-sidebar-foreground text-sidebar"
-                          : "bg-sidebar-accent-foreground text-background"
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                          : "bg-sidebar-foreground-muted text-sidebar"
                       }`}
                     >
                       {item.icon}
