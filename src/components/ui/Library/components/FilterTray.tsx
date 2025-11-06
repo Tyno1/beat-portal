@@ -88,7 +88,7 @@ export default function FilterTray({
 	};
 
 	return (
-		<div className="w-full space-y-4 p-4">
+		<div className="w-full space-y-4 grid grid-cols-2 gap-4">
 			{/* Category filters */}
 			{categories.map((category) => {
 				const selectOptions = convertToSelectOptions(category.options);

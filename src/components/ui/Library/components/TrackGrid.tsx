@@ -10,9 +10,9 @@ interface TrackGridProps {
 export default function TrackGrid({ data }: TrackGridProps) {
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-			{data.map((track) => (
+			{data.map((track, index) => (
 				<Card
-					key={track.id}
+					key={`${track.id}-${track.trackName}-${track.artist}-${index}`}
 					variant="outlined"
 					radius="xl"
 					className="hover:shadow-lg transition-all duration-200 cursor-pointer group"

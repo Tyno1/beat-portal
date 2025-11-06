@@ -1,5 +1,5 @@
 import { ChevronDown, X } from "lucide-react";
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useCallback, useEffect, useId, useRef, useState } from "react";
 
 export type SelectVariant = "default" | "filled" | "outline" | "ghost" | "alt";
 export type SelectSize = "sm" | "md" | "lg";
@@ -51,6 +51,11 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 		const generatedId = useId();
 		const selectId = id || generatedId;
 		const [isOpen, setIsOpen] = useState(false);
+		const [dropdownPosition, setDropdownPosition] = useState<{
+			top: number;
+			left: number;
+			width: number;
+		} | null>(null);
 		const selectRef = useRef<HTMLDivElement>(null);
 		const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -89,9 +94,40 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 			value.includes(option.value),
 		);
 
+		const updateDropdownPosition = useCallback(() => {
+			if (selectRef.current) {
+				const rect = selectRef.current.getBoundingClientRect();
+				const viewportHeight = window.innerHeight;
+				const spaceBelow = viewportHeight - rect.bottom;
+				const spaceAbove = rect.top;
+				// Parse maxHeight (e.g., "200px" -> 200)
+				const dropdownHeight = parseInt(maxHeight, 10) || 200;
+
+				// Position below if there's enough space, otherwise above
+				const top =
+					spaceBelow >= dropdownHeight || spaceBelow >= spaceAbove
+						? rect.bottom + 4
+						: rect.top - dropdownHeight - 4;
+
+				setDropdownPosition({
+					top,
+					left: rect.left,
+					width: rect.width,
+				});
+			}
+		}, [maxHeight]);
+
 		const handleToggle = () => {
 			if (!disabled) {
-				setIsOpen(!isOpen);
+				const newOpen = !isOpen;
+				if (newOpen) {
+					// Calculate position synchronously before opening
+					updateDropdownPosition();
+					setIsOpen(true);
+				} else {
+					setIsOpen(false);
+					setDropdownPosition(null);
+				}
 			}
 		};
 
@@ -115,6 +151,18 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 				onChange(value.filter((v) => v !== optionValue));
 			}
 		};
+
+		// Update position on scroll/resize when open
+		useEffect(() => {
+			if (isOpen) {
+				window.addEventListener("scroll", updateDropdownPosition, true);
+				window.addEventListener("resize", updateDropdownPosition);
+				return () => {
+					window.removeEventListener("scroll", updateDropdownPosition, true);
+					window.removeEventListener("resize", updateDropdownPosition);
+				};
+			}
+		}, [isOpen, updateDropdownPosition]);
 
 		// Close dropdown when clicking outside
 		useEffect(() => {
@@ -202,12 +250,17 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 							}`}
 						/>
 					</div>
-					{isOpen && (
+					{isOpen && dropdownPosition && (
 						<div
 							ref={dropdownRef}
-							className="absolute z-50 w-full mt-1 bg-card border border-input-border rounded-lg shadow-lg overflow-hidden"
+							className="fixed z-[100] bg-card border border-input-border rounded-lg shadow-lg overflow-hidden"
 							role="listbox"
-							style={{ maxHeight }}
+							style={{
+								maxHeight,
+								width: `${dropdownPosition.width}px`,
+								top: `${dropdownPosition.top}px`,
+								left: `${dropdownPosition.left}px`,
+							}}
 						>
 							<div className="overflow-y-auto" style={{ maxHeight }}>
 								{options.map((option) => {

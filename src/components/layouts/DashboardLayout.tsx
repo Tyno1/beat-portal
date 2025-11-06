@@ -77,7 +77,7 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
                       <div
                         className={`rounded-lg p-1 ${
                           isActive
-                            ? "bg-sidebar-accent-foreground text-sidebar-foreground-muted"
+                            ? "bg-sidebar-accent-foreground text-sidebar-accent"
                             : "bg-sidebar-foreground text-background"
                         } `}
                       >

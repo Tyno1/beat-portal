@@ -1,6 +1,7 @@
 import { Filter, Grid3x3, List, Search } from "lucide-react";
+import { useState } from "react";
 import { IconButton, Input } from "../../../atoms";
-import { Popover } from "../../../molecules";
+import { Modal } from "../../../molecules";
 import FilterTray from "./FilterTray";
 import type { Track } from "./TrackTable";
 
@@ -23,6 +24,8 @@ export default function LibraryToolbar({
 	selectedFilters,
 	onFilterChange,
 }: LibraryToolbarProps) {
+	const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
 	return (
 		<div className="space-y-3 mb-4 px-2">
 			<div className="flex gap-3 items-center">
@@ -34,40 +37,42 @@ export default function LibraryToolbar({
 					size="lg"
 				/>
 
-				<Popover
-					placement="bottom-end"
-					buttonVariant="solid"
-					buttonColor="secondary"
-          color="muted"
-					buttonSize="md"
-					buttonRadius="xl"
-					variant="glass"
+				<Modal
+					open={isFilterModalOpen}
+					onClose={() => setIsFilterModalOpen(false)}
+					onOpen={() => setIsFilterModalOpen(true)}
+					title="Filters"
 					trigger={
 						<span className="flex items-center gap-2">
 							<Filter size={16} /> Filters
 						</span>
 					}
-          contentClassName="w-[60vw]"
+					buttonVariant="solid"
+					buttonColor="secondary"
+					buttonSize="md"
+					buttonRadius="xl"
+					size="lg"
+					contentClassName="max-h-[80vh]"
 				>
 					<FilterTray
 						tracks={tracks}
 						selectedFilters={selectedFilters}
 						onFilterChange={onFilterChange}
 					/>
-				</Popover>
+				</Modal>
 				<div className="flex gap-2">
 					<IconButton
 						icon={<Grid3x3 size={20} />}
 						aria-label="Grid view"
 						color={viewMode === "grid" ? "primary" : "secondary"}
-						variant={viewMode === "grid" ? "solid" : "outline"}
+						variant="solid"
 						onClick={() => onViewChange("grid")}
 					/>
 					<IconButton
 						icon={<List size={20} />}
 						aria-label="List view"
 						color={viewMode === "table" ? "primary" : "secondary"}
-						variant={viewMode === "table" ? "solid" : "outline"}
+						variant="solid"
 						onClick={() => onViewChange("table")}
 					/>
 				</div>

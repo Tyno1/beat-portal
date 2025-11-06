@@ -47,14 +47,14 @@ export default function MetadataEditor() {
             />
           </div>
           <div className="flex gap-3 mt-8">
-            <Button variant="solid" color="primary" size="lg" >
+            <Button variant="solid" color="primary" size="md" >
               Save Changes
             </Button>
             <Button
               variant="solid"
               color="secondary"
-              size="lg"
-              iconAfter={<X />}
+              size="md"
+              iconAfter={<X size={16}/>}
             >
               Cancel
             </Button>

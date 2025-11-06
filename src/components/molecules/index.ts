@@ -22,7 +22,9 @@ export {
 	CardHeader,
 	CardTitle,
 } from "./Card";
-
+// Modal component
+export type { ModalProps } from "./Modal";
+export { default as Modal } from "./Modal";
 // PageHeader component
 export { PageHeader } from "./PageHeader";
 

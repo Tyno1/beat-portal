@@ -22,7 +22,7 @@ export default function Playlists() {
 						<div className="w-full h-48 bg-primary rounded-lg flex items-center justify-center mb-4">
 							<Music className="w-12 h-12 text-white" />
 						</div>
-						<h3 className="text-lg font-semibold text-foreground mb-1">
+						<h3 className="text-medium font-semibold text-foreground mb-1">
 							{playlist.title}
 						</h3>
 						<p className="text-sm text-muted-foreground">{playlist.date}</p>
