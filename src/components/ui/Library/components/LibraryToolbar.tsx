@@ -27,7 +27,7 @@ export default function LibraryToolbar({
 	const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
 	return (
-		<div className="space-y-3 mb-4 px-2">
+		<div className="space-y-3 px-2">
 			<div className="flex gap-3 items-center">
 				<Input
 					placeholder="Search Tracks, year, artists or genre..."
