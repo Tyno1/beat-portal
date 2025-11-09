@@ -2,6 +2,7 @@ import { PanelLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import useResize from "../../hooks/useResize";
+import { useActiveScanStatus } from "../../hooks/useScan";
 import { Badge, IconButton, ThemeToggle } from "../atoms";
 import { Card, CardContent } from "../molecules";
 
@@ -19,9 +20,17 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const [mode, _setMode] = useState<"online" | "offline">("online");
-  const { breakpoint, size} = useResize();
-  console.log(breakpoint, size);
+  const { breakpoint, size } = useResize();
 
+  const { data: activeScanStatus, isLoading: isActiveScanLoading } =
+    useActiveScanStatus();
+
+  console.log(activeScanStatus);
+  useEffect(() => {
+    if (isActiveScanLoading) {
+      console.log("Loading active scan status", activeScanStatus);
+    }
+  }, [isActiveScanLoading, activeScanStatus]);
   const handleToggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };

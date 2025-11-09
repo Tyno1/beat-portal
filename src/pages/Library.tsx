@@ -4,6 +4,7 @@ import LibraryHeader from "../components/ui/Library/components/LibraryHeader";
 import LibraryToolbar, {
   type ViewMode,
 } from "../components/ui/Library/components/LibraryToolbar";
+import PaginationControl from "../components/ui/Library/components/PaginationControl";
 import TrackGrid from "../components/ui/Library/components/TrackGrid";
 import TrackTable, {
   type Track,
@@ -168,6 +169,7 @@ export default function Library() {
   const [selectedFilters, setSelectedFilters] = useState<{
     [key: string]: string[];
   }>({});
+  const [searchText, setSearchText] = useState<string>("");
   const [filteredData, setFilteredData] = useState<Track[]>(mockTracks);
   const { breakpoint, size } = useResize();
   const generatedFilterId = useId();
@@ -179,12 +181,23 @@ export default function Library() {
     }));
   };
 
+  const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
   // Apply filters whenever selectedFilters or mockTracks change
   useEffect(() => {
     let filtered: Track[] = [...mockTracks];
 
-    // Filter by genre
+    if (searchText && searchText.trim().length > 0) {
+      filtered = filtered.filter((track) =>
+        Object.values(track).some((value) =>
+          value.toString().toLowerCase().includes(searchText.toLowerCase())
+        )
+      );
+    }
     if (selectedFilters.genre && selectedFilters.genre.length > 0) {
+      // Filter by genre
       filtered = filtered.filter((track) =>
         selectedFilters.genre.includes(track.genre)
       );
@@ -234,7 +247,7 @@ export default function Library() {
     }
 
     setFilteredData(filtered);
-  }, [selectedFilters]);
+  }, [selectedFilters, searchText]);
 
   useEffect(() => {
     if (breakpoint === "sm" || size < 900) {
@@ -243,50 +256,6 @@ export default function Library() {
       setViewMode("table");
     }
   }, [breakpoint, size]);
-
-  // const handleFilterChangeLegacy = (filterLabel: string) => {
-  // 	// Legacy handler for filter chips - keeping for backward compatibility
-  // 	setSelectedFilters({});
-
-  // 	let filtered: Track[] = [];
-
-  // 	switch (filterLabel) {
-  // 		case "All Tracks":
-  // 			filtered = mockTracks;
-  // 			break;
-  // 		case "120 - 128 Bpm":
-  // 			filtered = mockTracks.filter(
-  // 				(track) => track.bpm >= 120 && track.bpm <= 128,
-  // 			);
-  // 			break;
-  // 		case "Sad":
-  // 			filtered = mockTracks.filter((track) => track.mood === "Sad");
-  // 			break;
-  // 		case "Blues":
-  // 			filtered = mockTracks.filter((track) => track.genre === "Blues");
-  // 			break;
-  // 		case "Recently Added": {
-  // 			filtered = mockTracks.filter((track) => track.year >= 2020);
-  // 			break;
-  // 		}
-  // 		default: {
-  // 			const genreMatch = mockTracks.find((track) => track.genre === filterLabel);
-  // 			if (genreMatch) {
-  // 				filtered = mockTracks.filter((track) => track.genre === filterLabel);
-  // 			} else {
-  // 				const moodMatch = mockTracks.find((track) => track.mood === filterLabel);
-  // 				if (moodMatch) {
-  // 					filtered = mockTracks.filter((track) => track.mood === filterLabel);
-  // 				} else {
-  // 					filtered = mockTracks;
-  // 				}
-  // 			}
-  // 			break;
-  // 		}
-  // 	}
-
-  // 	setFilteredData(filtered);
-  // };
 
   const filterChips = Object.keys(selectedFilters)
     .filter((key) => selectedFilters[key].length > 0)
@@ -297,7 +266,7 @@ export default function Library() {
           <span>
             {selectedFilters[key].map((each) => (
               <span
-                className="bg-background text-primary rounded-full px-2 py-1 ml-1"
+                className="bg-white text-primary rounded-full px-2 py-1 ml-1"
                 key={each}
               >
                 {each}
@@ -306,13 +275,13 @@ export default function Library() {
           </span>
         </span>
       ),
-      active: selectedFilters[key].length > 0,
+      active: true,
       onClick: () => handleFilterChange(key, []),
       key: `${generatedFilterId}-${key}`,
     }));
 
   return (
-    <div className="py-4 pr-4 overflow-y-auto h-full w-full">
+    <div className="py-4 pr-4 overflow-hidden h-full w-full flex flex-col gap-6">
       <LibraryHeader />
       <LibraryToolbar
         viewMode={viewMode}
@@ -320,15 +289,25 @@ export default function Library() {
         tracks={mockTracks}
         selectedFilters={selectedFilters}
         onFilterChange={handleFilterChange}
+        onSearchTextChange={handleSearchTextChange}
+        searchText={searchText}
       />
-      <div className="my-8">
-        <FilterChips chips={filterChips} />
+
+      <FilterChips chips={filterChips} />
+
+      <div className="flex flex-col">
+        {viewMode === "table" ? (
+          <TrackTable data={filteredData} />
+        ) : (
+          <TrackGrid data={filteredData} />
+        )}
+        <PaginationControl
+          currentPage={1}
+          totalPages={10}
+          onPrevious={() => {}}
+          onNext={() => {}}
+        />
       </div>
-      {viewMode === "table" ? (
-        <TrackTable data={filteredData} />
-      ) : (
-        <TrackGrid data={filteredData} />
-      )}
     </div>
   );
 }

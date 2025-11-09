@@ -12,3 +12,5 @@ python-dotenv
 aiofiles
 cachetools
 black
+datamodel-code-generator
+

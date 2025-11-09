@@ -49,17 +49,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: healthy
-                  version:
-                    type: string
-                    example: 1.0.0
-                  timestamp:
-                    type: string
-                    format: date-time
+                $ref: '#/components/schemas/HealthResponse'
 
   /library/scan:
     post:
@@ -72,41 +62,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - paths
-              properties:
-                paths:
-                  type: array
-                  items:
-                    type: string
-                  example: ["/Users/username/Music/DJ Collection", "/Users/username/Downloads"]
-                include_subfolders:
-                  type: boolean
-                  default: true
-                watch_for_changes:
-                  type: boolean
-                  default: true
-                skip_duplicates:
-                  type: boolean
-                  default: false
+              $ref: '#/components/schemas/ScanLibraryRequest'
       responses:
         '202':
           description: Scan started successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  scan_id:
-                    type: string
-                    format: uuid
-                  status:
-                    type: string
-                    example: scanning
-                  message:
-                    type: string
-                    example: Library scan started
+                $ref: '#/components/schemas/ScanLibraryResponse'
         '400':
           description: Invalid request
 
@@ -129,31 +92,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  scan_id:
-                    type: string
-                    format: uuid
-                  status:
-                    type: string
-                    enum: [scanning, completed, failed]
-                  progress:
-                    type: number
-                    format: float
-                    example: 75.5
-                  files_scanned:
-                    type: integer
-                    example: 1247
-                  files_added:
-                    type: integer
-                    example: 1200
-                  files_skipped:
-                    type: integer
-                    example: 47
-                  errors:
-                    type: array
-                    items:
-                      type: string
+                $ref: '#/components/schemas/ScanStatusResponse'
 
   /tracks:
     get:
@@ -216,14 +155,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Track'
-                  pagination:
-                    $ref: '#/components/schemas/Pagination'
+                $ref: '#/components/schemas/TracksListResponse'
 
     post:
       tags:
@@ -320,23 +252,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                track_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
+              $ref: '#/components/schemas/BulkDeleteTracksRequest'
       responses:
         '200':
           description: Tracks deleted successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  deleted_count:
-                    type: integer
+                $ref: '#/components/schemas/BulkDeleteTracksResponse'
 
   /metadata/analyze:
     post:
@@ -349,23 +272,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                file_path:
-                  type: string
-                  example: /path/to/track.mp3
-                analysis_options:
-                  type: object
-                  properties:
-                    detect_bpm:
-                      type: boolean
-                      default: true
-                    detect_key:
-                      type: boolean
-                      default: true
-                    detect_genre:
-                      type: boolean
-                      default: false
+              $ref: '#/components/schemas/AnalyzeMetadataRequest'
       responses:
         '200':
           description: Metadata analyzed successfully
@@ -385,27 +292,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                track_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
+              $ref: '#/components/schemas/BatchAnalyzeMetadataRequest'
       responses:
         '202':
           description: Batch analysis started
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  job_id:
-                    type: string
-                    format: uuid
-                  status:
-                    type: string
-                    example: processing
+                $ref: '#/components/schemas/BatchAnalyzeMetadataResponse'
 
   /ai/enhance:
     post:
@@ -418,59 +312,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - track_id
-              properties:
-                track_id:
-                  type: string
-                  format: uuid
-                enhancement_options:
-                  type: object
-                  properties:
-                    enhance_genre:
-                      type: boolean
-                      default: true
-                    enhance_mood:
-                      type: boolean
-                      default: true
-                    enhance_bpm:
-                      type: boolean
-                      default: true
-                    enhance_key:
-                      type: boolean
-                      default: true
+              $ref: '#/components/schemas/EnhanceMetadataRequest'
       responses:
         '200':
           description: Metadata enhanced successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  track_id:
-                    type: string
-                    format: uuid
-                  enhanced_fields:
-                    type: object
-                    properties:
-                      genre:
-                        type: string
-                      mood:
-                        type: string
-                      bpm:
-                        type: integer
-                      key:
-                        type: string
-                  confidence_scores:
-                    type: object
-                    properties:
-                      genre:
-                        type: number
-                        format: float
-                      mood:
-                        type: number
-                        format: float
+                $ref: '#/components/schemas/EnhanceMetadataResponse'
 
   /ai/batch-enhance:
     post:
@@ -483,35 +332,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                track_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
-                enhancement_options:
-                  type: object
-                  properties:
-                    enhance_genre:
-                      type: boolean
-                      default: true
-                    enhance_mood:
-                      type: boolean
-                      default: true
+              $ref: '#/components/schemas/BatchEnhanceMetadataRequest'
       responses:
         '202':
           description: Batch enhancement started
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  job_id:
-                    type: string
-                    format: uuid
-                  total_tracks:
-                    type: integer
+                $ref: '#/components/schemas/BatchEnhanceMetadataResponse'
 
   /ai/jobs/{job_id}:
     get:
@@ -532,27 +360,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  job_id:
-                    type: string
-                    format: uuid
-                  status:
-                    type: string
-                    enum: [pending, processing, completed, failed]
-                  progress:
-                    type: number
-                    format: float
-                  tracks_processed:
-                    type: integer
-                  tracks_total:
-                    type: integer
-                  started_at:
-                    type: string
-                    format: date-time
-                  completed_at:
-                    type: string
-                    format: date-time
+                $ref: '#/components/schemas/EnhancementJobStatus'
 
   /playlists:
     get:
@@ -580,16 +388,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - name
-              properties:
-                name:
-                  type: string
-                  example: "Summer House Mix"
-                description:
-                  type: string
-                  example: "High energy house tracks for summer sets"
+              $ref: '#/components/schemas/CreatePlaylistRequest'
       responses:
         '201':
           description: Playlist created successfully
@@ -636,12 +435,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
+              $ref: '#/components/schemas/UpdatePlaylistRequest'
       responses:
         '200':
           description: Playlist updated successfully
@@ -680,13 +474,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                track_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
+              $ref: '#/components/schemas/AddTracksToPlaylistRequest'
       responses:
         '200':
           description: Tracks added successfully
@@ -708,13 +496,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                track_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
+              $ref: '#/components/schemas/RemoveTracksFromPlaylistRequest'
       responses:
         '200':
           description: Tracks removed successfully
@@ -737,26 +519,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                format:
-                  type: string
-                  enum: [m3u, pls, xspf, json]
-                  default: m3u
-                output_path:
-                  type: string
+              $ref: '#/components/schemas/ExportPlaylistRequest'
       responses:
         '200':
           description: Playlist exported successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  file_path:
-                    type: string
-                  format:
-                    type: string
+                $ref: '#/components/schemas/ExportPlaylistResponse'
 
   /analysis/overview:
     get:
@@ -784,21 +554,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  distribution:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        range:
-                          type: string
-                          example: "120-140"
-                        count:
-                          type: integer
-                        percentage:
-                          type: number
-                          format: float
+                $ref: '#/components/schemas/BPMDistributionResponse'
 
   /analysis/key-distribution:
     get:
@@ -812,21 +568,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  distribution:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        key:
-                          type: string
-                          example: "Am"
-                        count:
-                          type: integer
-                        percentage:
-                          type: number
-                          format: float
+                $ref: '#/components/schemas/KeyDistributionResponse'
 
   /analysis/genre-distribution:
     get:
@@ -840,20 +582,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  distribution:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        genre:
-                          type: string
-                        count:
-                          type: integer
-                        percentage:
-                          type: number
-                          format: float
+                $ref: '#/components/schemas/GenreDistributionResponse'
 
   /analysis/mood-distribution:
     get:
@@ -867,20 +596,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  distribution:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        mood:
-                          type: string
-                        count:
-                          type: integer
-                        percentage:
-                          type: number
-                          format: float
+                $ref: '#/components/schemas/MoodDistributionResponse'
 
 components:
   schemas:
@@ -979,33 +695,39 @@ components:
         key:
           type: string
 
+    DetectedMetadata:
+      type: object
+      properties:
+        bpm:
+          type: integer
+        key:
+          type: string
+        duration:
+          type: integer
+        sample_rate:
+          type: integer
+        bitrate:
+          type: integer
+
+    ConfidenceScores:
+      type: object
+      properties:
+        bpm:
+          type: number
+          format: float
+        key:
+          type: number
+          format: float
+
     MetadataAnalysis:
       type: object
       properties:
         file_path:
           type: string
         detected_metadata:
-          type: object
-          properties:
-            bpm:
-              type: integer
-            key:
-              type: string
-            duration:
-              type: integer
-            sample_rate:
-              type: integer
-            bitrate:
-              type: integer
+          $ref: '#/components/schemas/DetectedMetadata'
         confidence_scores:
-          type: object
-          properties:
-            bpm:
-              type: number
-              format: float
-            key:
-              type: number
-              format: float
+          $ref: '#/components/schemas/ConfidenceScores'
 
     Playlist:
       type: object
@@ -1079,3 +801,372 @@ components:
           type: boolean
         has_previous:
           type: boolean
+
+    TracksListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Track'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    ScanLibraryRequest:
+      type: object
+      required:
+        - paths
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+          example: ["/Users/username/Music/DJ Collection", "/Users/username/Downloads"]
+        include_subfolders:
+          type: boolean
+          default: true
+        watch_for_changes:
+          type: boolean
+          default: true
+        skip_duplicates:
+          type: boolean
+          default: false
+
+    ScanLibraryResponse:
+      type: object
+      properties:
+        scan_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: scanning
+        message:
+          type: string
+          example: Library scan started
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: healthy
+        version:
+          type: string
+          example: 1.0.0
+        timestamp:
+          type: string
+          format: date-time
+
+    ScanStatusResponse:
+      type: object
+      properties:
+        scan_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [discovering, scanning, completed, failed]
+          description: Current status of the scan operation
+        message:
+          type: string
+          description: Current stage message (e.g., 'Discovering audio files...', 'Processing 100 audio file(s)...')
+          example: "Discovering audio files..."
+        progress:
+          type: number
+          format: float
+          example: 75.5
+          description: Progress percentage (0-100)
+        files_scanned:
+          type: integer
+          example: 1247
+          description: Total number of files processed
+        files_added:
+          type: integer
+          example: 1200
+          description: Number of files added to the library
+        files_skipped:
+          type: integer
+          example: 47
+          description: Number of files skipped (duplicates)
+        errors:
+          type: array
+          items:
+            type: string
+          description: List of errors encountered during the scan
+
+    BulkDeleteTracksRequest:
+      type: object
+      properties:
+        track_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    BulkDeleteTracksResponse:
+      type: object
+      properties:
+        deleted_count:
+          type: integer
+
+    AnalyzeMetadataRequest:
+      type: object
+      properties:
+        file_path:
+          type: string
+          example: /path/to/track.mp3
+        analysis_options:
+          type: object
+          properties:
+            detect_bpm:
+              type: boolean
+              default: true
+            detect_key:
+              type: boolean
+              default: true
+            detect_genre:
+              type: boolean
+              default: false
+
+    BatchAnalyzeMetadataRequest:
+      type: object
+      properties:
+        track_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    BatchAnalyzeMetadataResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: processing
+
+    EnhanceMetadataRequest:
+      type: object
+      required:
+        - track_id
+      properties:
+        track_id:
+          type: string
+          format: uuid
+        enhancement_options:
+          type: object
+          properties:
+            enhance_genre:
+              type: boolean
+              default: true
+            enhance_mood:
+              type: boolean
+              default: true
+            enhance_bpm:
+              type: boolean
+              default: true
+            enhance_key:
+              type: boolean
+              default: true
+
+    EnhanceMetadataResponse:
+      type: object
+      properties:
+        track_id:
+          type: string
+          format: uuid
+        enhanced_fields:
+          type: object
+          properties:
+            genre:
+              type: string
+            mood:
+              type: string
+            bpm:
+              type: integer
+            key:
+              type: string
+        confidence_scores:
+          type: object
+          properties:
+            genre:
+              type: number
+              format: float
+            mood:
+              type: number
+              format: float
+
+    BatchEnhanceMetadataRequest:
+      type: object
+      properties:
+        track_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        enhancement_options:
+          type: object
+          properties:
+            enhance_genre:
+              type: boolean
+              default: true
+            enhance_mood:
+              type: boolean
+              default: true
+
+    BatchEnhanceMetadataResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        total_tracks:
+          type: integer
+
+    EnhancementJobStatus:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, processing, completed, failed]
+        progress:
+          type: number
+          format: float
+        tracks_processed:
+          type: integer
+        tracks_total:
+          type: integer
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+
+    CreatePlaylistRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Summer House Mix"
+        description:
+          type: string
+          example: "High energy house tracks for summer sets"
+
+    UpdatePlaylistRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    AddTracksToPlaylistRequest:
+      type: object
+      properties:
+        track_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    RemoveTracksFromPlaylistRequest:
+      type: object
+      properties:
+        track_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    ExportPlaylistRequest:
+      type: object
+      properties:
+        format:
+          type: string
+          enum: [m3u, pls, xspf, json]
+          default: m3u
+        output_path:
+          type: string
+
+    ExportPlaylistResponse:
+      type: object
+      properties:
+        file_path:
+          type: string
+        format:
+          type: string
+
+    BPMDistributionResponse:
+      type: object
+      properties:
+        distribution:
+          type: array
+          items:
+            type: object
+            properties:
+              range:
+                type: string
+                example: "120-140"
+              count:
+                type: integer
+              percentage:
+                type: number
+                format: float
+
+    KeyDistributionResponse:
+      type: object
+      properties:
+        distribution:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                example: "Am"
+              count:
+                type: integer
+              percentage:
+                type: number
+                format: float
+
+    GenreDistributionResponse:
+      type: object
+      properties:
+        distribution:
+          type: array
+          items:
+            type: object
+            properties:
+              genre:
+                type: string
+              count:
+                type: integer
+              percentage:
+                type: number
+                format: float
+
+    MoodDistributionResponse:
+      type: object
+      properties:
+        distribution:
+          type: array
+          items:
+            type: object
+            properties:
+              mood:
+                type: string
+              count:
+                type: integer
+              percentage:
+                type: number
+                format: float

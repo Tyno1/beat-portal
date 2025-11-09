@@ -12,7 +12,6 @@ interface FilterChipsProps {
 }
 
 export default function FilterChips({ chips }: FilterChipsProps) {
-  console.log(chips);
   return (
     <div className="flex gap-2 flex-wrap">
       {chips.map((chip) =>(
@@ -24,7 +23,7 @@ export default function FilterChips({ chips }: FilterChipsProps) {
           radius="full"
           onClick={chip.onClick}
         >
-          {typeof chip.label === "string" ? chip.label.charAt(0).toUpperCase() + chip.label.slice(1) : chip.label}
+          {chip.label}
         </Button>
       ))}
     </div>

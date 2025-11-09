@@ -3,7 +3,7 @@ import { Button } from "../../../atoms";
 
 export default function LibraryHeader() {
   return (
-    <div className="flex justify-between items-center border-b border-border pb-4 mb-6">
+    <div className="flex justify-between items-center border-b border-border pb-4">
       <h1 className="text-2xl font-bold text-foreground">Library</h1>
       <div className="flex gap-3">
         <Button
