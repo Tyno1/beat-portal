@@ -1,0 +1,339 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-foreground: var(--input-foreground);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-border: var(--card-border);
+  --color-card-header: var(--card-header);
+  --color-card-muted: var(--card-muted);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-foreground-muted: var(--sidebar-foreground-muted);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-badge-success: var(--badge-success);
+  --color-badge-success-background: var(--badge-success-background);
+  --color-badge-error: var(--badge-error);
+  --color-badge-error-background: var(--badge-error-background);
+  --color-badge-warning: var(--badge-warning);
+  --color-badge-warning-background: var(--badge-warning-background);
+  --color-badge-info: var(--badge-info);
+  --color-badge-info-background: var(--badge-info-background);
+  --color-badge-secondary: var(--badge-secondary);
+  --color-badge-secondary-background: var(--badge-secondary-background);
+  --radius: var(--radius);
+}
+/* Custom CSS variables for theming */
+:root {
+  --primary: rgb(189, 16, 48);
+  --primary-foreground: rgb(255, 255, 255);
+  --secondary: rgb(54, 54, 54); 
+  --secondary-foreground: rgb(255, 255, 255);
+  --background: rgb(217, 217, 217);
+  --foreground: rgb(68, 68, 68);
+
+  --muted: rgb(246, 242, 242); 
+  --muted-foreground: rgb(68, 68, 68);
+  --border: rgb(234, 236, 240);
+  --input: rgb(217, 217, 217);
+  --input-foreground: rgb(255, 255, 255);
+  --ring: rgb(189, 16, 48);;
+  --card: rgb(255, 255, 255);
+  --card-foreground: rgb(68, 68, 68);
+  --card-border: rgb(229, 231, 235);
+  --card-header: rgb(68, 68, 68);
+  --card-muted: rgb(160, 160, 160);
+  --popover: rgb(241, 225, 225);
+  --popover-foreground: rgb(68, 68, 68);
+  --destructive: rgb(189, 16, 48);
+  --destructive-foreground: rgb(255, 255, 255);
+  --sidebar: rgb(255, 255, 255); 
+  --sidebar-foreground: rgb(0, 0, 0); 
+  --sidebar-foreground-muted: rgb(68, 68, 68); 
+  --sidebar-accent: rgb(189, 16, 48);
+  --sidebar-accent-foreground: rgb(255, 255, 255);
+
+  --success: rgb(7, 102, 1);
+  --success-background: rgb(221, 252, 219);
+  --badge-success: rgb(7, 102, 1);
+  --badge-success-background: rgb(221, 252, 219);
+  --badge-error: rgb(206, 22, 25);
+  --badge-error-background: rgb(254, 226, 226);
+  --badge-warning: rgb(175, 84, 5);
+  --badge-warning-background: rgb(255, 255, 255);
+  --badge-info: rgb(19, 87, 196);
+  --badge-info-background: rgb(219, 234, 254);
+  --badge-secondary: rgb(68, 68, 68);
+  --badge-secondary-background: rgb(245, 245, 245);
+  --alert-success:rgb(7, 102, 1);
+  --alert-success-background: rgb(221, 252, 219);
+  --alert-success-border: rgb(7, 102, 1);
+  --alert-error: rgb(206, 22, 25);
+  --alert-error-background: rgb(254, 226, 226);
+  --alert-error-border: rgb(248, 113, 113);
+  --alert-warning: rgb(190, 88, 5);
+  --alert-warning-background: rgb(255, 255, 255);
+  --alert-warning-border: rgb(251, 191, 36);
+  --alert-info: rgb(59, 130, 246);
+  --alert-info-background: rgb(219, 234, 254);
+  --alert-info-border: rgb(96, 165, 250);
+  --radius: 0.5rem;
+}
+
+.dark {
+    --primary: rgb(220, 38, 38);
+    --primary-foreground: rgb(255, 255, 255);
+    --secondary: rgb(54, 54, 54); 
+    --secondary-foreground: rgb(255, 255, 255);
+    --background: rgb(15, 15, 15);
+    --foreground: rgb(255, 255, 255);
+  
+    --muted: rgb(54, 54, 54); 
+    --muted-foreground: rgb(194, 194, 194);
+    --border: rgb(25, 25, 25);
+    --input: rgb(255, 255, 255);
+    --input-foreground: rgb(0, 0, 0);
+    --ring: rgb(189, 16, 48);;
+    --card: rgb(0, 0, 0);
+    --card-foreground: rgb(255, 255, 255);
+    --card-border: rgb(55, 65, 81);
+    --card-header: rgb(255, 255, 255);
+    --card-muted: rgb(160, 160, 160);
+    --popover: rgb(0, 0, 0);
+    --popover-foreground: rgb(255, 255, 255);
+    --destructive: rgb(206, 22, 25);
+    --destructive-foreground: rgb(255, 255, 255);
+    --sidebar: rgb(0, 0, 0); 
+    --sidebar-foreground: rgb(255, 255, 255);
+    --sidebar-foreground-muted: rgb(223, 223, 223); 
+    --sidebar-accent: rgb(206, 22, 25);
+    --sidebar-accent-foreground: rgb(255, 255, 255);
+  
+    --success: rgb(11, 160, 0); 
+    --success-background: rgb(4, 54, 0);
+    --badge-success: rgb(34, 197, 94);
+    --badge-success-background: rgb(4, 54, 0);
+    --badge-error: rgb(248, 113, 113);
+    --badge-error-background: rgb(69, 10, 10);
+    --badge-warning: rgb(251, 191, 36);
+    --badge-warning-background: rgb(69, 26, 3);
+    --badge-info: rgb(96, 165, 250);
+    --badge-info-background: rgb(22, 49, 120);
+    --badge-secondary: rgb(160, 160, 160);
+    --badge-secondary-background: rgb(44, 44, 44);
+    --alert-success: rgb(34, 197, 94);
+    --alert-success-background: rgb(4, 54, 0);
+    --alert-success-border: rgb(34, 197, 94);
+    --alert-error: rgb(248, 113, 113);
+    --alert-error-background: rgb(69, 10, 10);
+    --alert-error-border: rgb(248, 113, 113);
+    --alert-warning: rgb(251, 191, 36);
+    --alert-warning-background: rgb(69, 26, 3);
+    --alert-warning-border: rgb(251, 191, 36);
+    --alert-info: rgb(96, 165, 250);
+    --alert-info-background: rgb(30, 58, 138);
+    --alert-info-border: rgb(96, 165, 250);
+    --radius: 0.5rem;
+  }
+
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom component styles */
+
+/* Smooth transitions for theme changes - only on specific elements */
+html {
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+body {
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+button, a{
+  cursor: pointer;
+}
+
+/* Only transition theme-related properties on interactive elements */
+button, input, select, textarea {
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+/* Theme-aware elements */
+.card, .btn-primary, .btn-secondary {
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+/* Sidebar styles */
+.sidebar {
+  background-color: rgb(var(--sidebar));
+  color: rgb(var(--sidebar-foreground));
+  border-right: 1px solid rgb(var(--sidebar-border));
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  color: rgb(var(--sidebar-foreground));
+  text-decoration: none;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.sidebar-item:hover {
+  background-color: rgb(var(--sidebar-muted));
+  color: rgb(var(--sidebar-foreground));
+}
+
+.sidebar-item.active {
+  background-color: rgb(var(--sidebar-accent));
+  color: rgb(var(--sidebar-accent-foreground));
+}
+
+.sidebar-item-muted {
+  color: rgb(var(--sidebar-muted-foreground));
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem 0.5rem;
+}
+
+/* Menu bar styles */
+.menu-bar {
+  background-color: rgb(var(--menu-bar));
+  color: rgb(var(--menu-bar-foreground));
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid rgb(var(--border));
+}
+
+/* Header styles */
+.header {
+  background-color: rgb(var(--header));
+  color: rgb(var(--header-foreground));
+  padding: 1rem;
+  border-bottom: 1px solid rgb(var(--border));
+}
+
+/* Button styles matching the design */
+.btn-red {
+  background-color: rgb(var(--primary));
+  color: rgb(var(--primary-foreground));
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.btn-red:hover {
+  background-color: rgb(var(--primary) / 0.9);
+}
+
+.btn-gray {
+  background-color: rgb(var(--secondary));
+  color: rgb(var(--secondary-foreground));
+  border: 1px solid rgb(var(--border));
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.btn-gray:hover {
+  background-color: rgb(var(--secondary) / 0.9);
+}
+
+/* Filter tag styles */
+.filter-tag {
+  background-color: rgb(var(--secondary));
+  color: rgb(var(--secondary-foreground));
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  margin: 0.25rem;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.filter-tag.active {
+  background-color: rgb(var(--primary));
+  color: rgb(var(--primary-foreground));
+}
+
+/* Search bar styles */
+.search-bar {
+  background-color: rgb(var(--input));
+  color: rgb(var(--foreground));
+  border: 1px solid rgb(var(--border));
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  width: 100%;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: rgb(var(--ring));
+  box-shadow: 0 0 0 2px rgb(var(--ring) / 0.2);
+}
+
+.search-bar::placeholder {
+  color: rgb(var(--muted-foreground));
+}
+
+/* Success/status styles */
+.status-online {
+  background-color: rgb(var(--success-background));
+  color: rgb(var(--success));
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Window controls */
+.window-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.window-control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.window-control.close {
+  background-color: #FF5F56;
+}
+
+.window-control.minimize {
+  background-color: #FFBD2E;
+}
+
+.window-control.maximize {
+  background-color: #27C93F;
+}
