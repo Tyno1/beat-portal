@@ -1,14 +1,14 @@
 import { useEffect, useId, useState } from "react";
-import FilterChips from "../components/ui/Library/components/FilterChips";
-import LibraryHeader from "../components/ui/Library/components/LibraryHeader";
+import FilterChips from "../components/ui/Library/FilterChips";
+import LibraryHeader from "../components/ui/Library/LibraryHeader";
 import LibraryToolbar, {
   type ViewMode,
-} from "../components/ui/Library/components/LibraryToolbar";
-import PaginationControl from "../components/ui/Library/components/PaginationControl";
-import TrackGrid from "../components/ui/Library/components/TrackGrid";
+} from "../components/ui/Library/LibraryToolbar";
+import PaginationControl from "../components/ui/Library/PaginationControl";
+import TrackGrid from "../components/ui/Library/TrackGrid";
 import TrackTable, {
   type Track,
-} from "../components/ui/Library/components/TrackTable";
+} from "../components/ui/Library/TrackTable";
 import useResize from "../hooks/useResize";
 
 const mockTracks: Track[] = [

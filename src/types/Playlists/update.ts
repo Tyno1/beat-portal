@@ -6,5 +6,5 @@ export type PutPlaylistRequest = {
 };
 
 export type PutPlaylistResponse =
-	paths["/playlists/{playlist_id}"]["put"]["responses"]["200"]["content"]["application/json"];
+	paths["/playlists/{playlist_id}"]["put"]["responses"]["200"];
 

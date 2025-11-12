@@ -2,9 +2,9 @@ import { PanelLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import useResize from "../../hooks/useResize";
-import { useActiveScanStatus } from "../../hooks/useScan";
 import { Badge, IconButton, ThemeToggle } from "../atoms";
 import { Card, CardContent } from "../molecules";
+import ProgressIndicator from "../ui/Scan/ProgressIndicator";
 
 interface NavItem {
   path: string;
@@ -22,15 +22,6 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
   const [mode, _setMode] = useState<"online" | "offline">("online");
   const { breakpoint, size } = useResize();
 
-  const { data: activeScanStatus, isLoading: isActiveScanLoading } =
-    useActiveScanStatus();
-
-  console.log(activeScanStatus);
-  useEffect(() => {
-    if (isActiveScanLoading) {
-      console.log("Loading active scan status", activeScanStatus);
-    }
-  }, [isActiveScanLoading, activeScanStatus]);
   const handleToggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -114,6 +105,8 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
             })}
           </ul>
         </nav>
+
+        {isMenuOpen && <ProgressIndicator />}
 
         <div className="p-4 w-full border-t border-border flex flex-col gap-2 items-center">
           {isMenuOpen && (

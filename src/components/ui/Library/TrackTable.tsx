@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { ArrowUpDown, MoreVertical } from "lucide-react";
 import { useState } from "react";
-import { IconButton } from "../../../atoms";
+import { IconButton } from "../../atoms";
 
 export interface Track {
   id: number;

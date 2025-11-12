@@ -1,5 +1,5 @@
-import type { SelectOption } from "../../../atoms";
-import { Select } from "../../../atoms";
+import type { SelectOption } from "../../atoms";
+import { Select } from "../../atoms";
 import type { Track } from "./TrackTable";
 
 interface FilterCategory {

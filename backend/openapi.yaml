@@ -142,7 +142,7 @@ paths:
           schema:
             type: string
             enum: [title, artist, bpm, key, year, date_added]
-            default: date_added
+            default: title
         - name: sort_order
           in: query
           schema:
@@ -894,6 +894,12 @@ components:
           items:
             type: string
           description: List of errors encountered during the scan
+        paths:
+          type: array
+          items:
+            type: string
+          description: List of paths being scanned
+          example: ["/Users/username/Music", "/Users/username/Documents/Music"]
 
     BulkDeleteTracksRequest:
       type: object

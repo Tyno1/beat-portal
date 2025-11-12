@@ -1,7 +1,8 @@
 """
 Progress tracking for library scan operations.
 """
-from typing import Dict
+
+from typing import Dict, List
 from uuid import UUID
 
 from models import Status, ScanStatusResponse
@@ -13,7 +14,7 @@ class ScanProgressTracker:
     def __init__(self):
         self._scans: Dict[UUID, ScanStatusResponse] = {}
 
-    def create_scan(self, scan_id: UUID) -> ScanStatusResponse:
+    def create_scan(self, scan_id: UUID, paths: List[str] = None) -> ScanStatusResponse:
         """Initialize a new scan progress tracker."""
         scan_status = ScanStatusResponse(
             scan_id=scan_id,
@@ -24,36 +25,34 @@ class ScanProgressTracker:
             files_added=0,
             files_skipped=0,
             errors=[],
+            paths=paths or [],
         )
         self._scans[scan_id] = scan_status
         return scan_status
 
-    def update_scan(self, scan_id: UUID, files_scanned: int = None,
-                   files_added: int = None, files_skipped: int = None,
-                   error: str = None, progress: float = None,
-                   status: Status = None, message: str = None):
+    def update_scan(self, scan_id: UUID, **kwargs):
         """Update scan progress."""
         if scan_id not in self._scans:
             return
 
         scan = self._scans[scan_id]
 
-        if files_scanned is not None:
-            scan.files_scanned = files_scanned
-        if files_added is not None:
-            scan.files_added = files_added
-        if files_skipped is not None:
-            scan.files_skipped = files_skipped
-        if error is not None:
+        if "files_scanned" in kwargs:
+            scan.files_scanned = kwargs["files_scanned"]
+        if "files_added" in kwargs:
+            scan.files_added = kwargs["files_added"]
+        if "files_skipped" in kwargs:
+            scan.files_skipped = kwargs["files_skipped"]
+        if "error" in kwargs:
             if scan.errors is None:
                 scan.errors = []
-            scan.errors.append(error)
-        if progress is not None:
-            scan.progress = progress
-        if status is not None:
-            scan.status = status
-        if message is not None:
-            scan.message = message
+            scan.errors.append(kwargs["error"])
+        if "progress" in kwargs:
+            scan.progress = kwargs["progress"]
+        if "status" in kwargs:
+            scan.status = kwargs["status"]
+        if "message" in kwargs:
+            scan.message = kwargs["message"]
 
     def complete_scan(self, scan_id: UUID):
         """Mark scan as completed."""

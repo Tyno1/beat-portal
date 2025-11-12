@@ -1,4 +1,4 @@
-import { Button } from "../../../atoms";
+import { Button } from "../../atoms";
 
 interface FilterChip {
   label: React.ReactNode;

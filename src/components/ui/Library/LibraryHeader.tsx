@@ -1,5 +1,5 @@
 import { Download, Upload } from "lucide-react";
-import { Button } from "../../../atoms";
+import { Button } from "../../atoms";
 
 export default function LibraryHeader() {
   return (

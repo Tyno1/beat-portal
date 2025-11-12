@@ -1,6 +1,6 @@
 import { MoreVertical, Music } from "lucide-react";
-import { Badge, IconButton } from "../../../atoms";
-import { Card, CardContent } from "../../../molecules";
+import { Badge, IconButton } from "../../atoms";
+import { Card, CardContent } from "../../molecules";
 import type { Track } from "./TrackTable";
 
 interface TrackGridProps {
@@ -41,7 +41,9 @@ export default function TrackGrid({ data }: TrackGridProps) {
 								<h3 className="font-semibold text-foreground text-sm leading-tight line-clamp-2">
 									{track.trackName}
 								</h3>
-								<p className="text-xs text-muted-foreground mt-1">{track.artist}</p>
+								<p className="text-xs text-muted-foreground mt-1">
+									{track.artist}
+								</p>
 							</div>
 
 							<div className="flex flex-wrap gap-2 mt-3">
@@ -56,19 +58,27 @@ export default function TrackGrid({ data }: TrackGridProps) {
 							<div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border">
 								<div>
 									<p className="text-xs text-muted-foreground">BPM</p>
-									<p className="text-sm font-medium text-foreground">{track.bpm}</p>
+									<p className="text-sm font-medium text-foreground">
+										{track.bpm}
+									</p>
 								</div>
 								<div>
 									<p className="text-xs text-muted-foreground">Key</p>
-									<p className="text-sm font-medium text-foreground">{track.key}</p>
+									<p className="text-sm font-medium text-foreground">
+										{track.key}
+									</p>
 								</div>
 								<div>
 									<p className="text-xs text-muted-foreground">Year</p>
-									<p className="text-sm font-medium text-foreground">{track.year}</p>
+									<p className="text-sm font-medium text-foreground">
+										{track.year}
+									</p>
 								</div>
 								<div>
 									<p className="text-xs text-muted-foreground">ID</p>
-									<p className="text-sm font-medium text-foreground">{track.id}</p>
+									<p className="text-sm font-medium text-foreground">
+										{track.id}
+									</p>
 								</div>
 							</div>
 						</div>
@@ -78,4 +88,3 @@ export default function TrackGrid({ data }: TrackGridProps) {
 		</div>
 	);
 }
-

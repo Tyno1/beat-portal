@@ -2,6 +2,7 @@
 Storage module for managing tracks in the library.
 Currently uses in-memory storage, but can be easily replaced with a database.
 """
+
 from datetime import datetime
 from typing import Dict, List, Optional
 from uuid import UUID, uuid4
@@ -16,7 +17,9 @@ class TrackStorage:
         self._tracks: Dict[UUID, Track] = {}
         self._tracks_by_path: Dict[str, UUID] = {}
 
-    def create_track(self, track_data: TrackCreate, file_props: Optional[dict] = None) -> Track:
+    def create_track(
+        self, track_data: TrackCreate, file_props: Optional[dict] = None
+    ) -> Track:
         """Create a new track in storage."""
         # Check if track with same path already exists
         if track_data.file_path in self._tracks_by_path:
@@ -39,11 +42,11 @@ class TrackStorage:
             mood=track_data.mood,
             bpm=track_data.bpm,
             key=track_data.key,
-            file_size=file_props.get('file_size'),
-            file_format=file_props.get('file_format'),
-            duration=file_props.get('duration'),
-            bitrate=file_props.get('bitrate'),
-            sample_rate=file_props.get('sample_rate'),
+            file_size=file_props.get("file_size"),
+            file_format=file_props.get("file_format"),
+            duration=file_props.get("duration"),
+            bitrate=file_props.get("bitrate"),
+            sample_rate=file_props.get("sample_rate"),
             created_at=now,
             updated_at=now,
             play_count=0,

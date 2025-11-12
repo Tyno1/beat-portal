@@ -14,11 +14,12 @@ from pydantic import BaseModel, Field
 
 class Track(BaseModel):
     """Represents a music track with complete metadata and file information.
-    
+
     Includes basic track information (title, artist, album), musical properties
     (BPM, key, genre, mood), file details (path, format, size, bitrate), and
     playback statistics (play count, last played timestamp).
     """
+
     id: Optional[UUID] = None
     title: Optional[str] = None
     artist: Optional[str] = None
@@ -28,10 +29,10 @@ class Track(BaseModel):
     mood: Optional[str] = None
     bpm: Optional[int] = None
     key: Optional[str] = None
-    duration: Optional[int] = Field(None, description='Duration in seconds')
+    duration: Optional[int] = Field(None, description="Duration in seconds")
     file_path: Optional[str] = None
-    file_size: Optional[int] = Field(None, description='File size in bytes')
-    file_format: Optional[str] = Field(None, example='mp3')
+    file_size: Optional[int] = Field(None, description="File size in bytes")
+    file_format: Optional[str] = Field(None, example="mp3")
     bitrate: Optional[int] = None
     sample_rate: Optional[int] = None
     created_at: Optional[datetime] = None
@@ -43,10 +44,11 @@ class Track(BaseModel):
 
 class TrackCreate(BaseModel):
     """Schema for creating a new track in the library.
-    
+
     Requires a file_path and allows optional metadata fields to be set
     during track creation.
     """
+
     file_path: str
     title: Optional[str] = None
     artist: Optional[str] = None
@@ -60,10 +62,11 @@ class TrackCreate(BaseModel):
 
 class TrackUpdate(BaseModel):
     """Schema for updating track metadata.
-    
+
     All fields are optional, allowing partial updates to track information
     without requiring all fields to be provided.
     """
+
     title: Optional[str] = None
     artist: Optional[str] = None
     album: Optional[str] = None
@@ -76,10 +79,11 @@ class TrackUpdate(BaseModel):
 
 class DetectedMetadata(BaseModel):
     """Metadata detected from audio file analysis.
-    
+
     Contains technical audio properties that can be automatically extracted
     from the audio file itself, such as BPM, key, duration, sample rate, and bitrate.
     """
+
     bpm: Optional[int] = None
     key: Optional[str] = None
     duration: Optional[int] = None
@@ -89,21 +93,23 @@ class DetectedMetadata(BaseModel):
 
 class ConfidenceScores(BaseModel):
     """Confidence scores for detected metadata values.
-    
+
     Provides reliability scores (typically 0.0 to 1.0) for automatically
     detected metadata fields, indicating how confident the detection algorithm
     is in the accuracy of each value.
     """
+
     bpm: Optional[float] = None
     key: Optional[float] = None
 
 
 class MetadataAnalysis(BaseModel):
     """Results of metadata analysis for an audio file.
-    
+
     Contains the detected metadata from audio analysis along with confidence
     scores indicating the reliability of the detected values.
     """
+
     file_path: Optional[str] = None
     detected_metadata: Optional[DetectedMetadata] = None
     confidence_scores: Optional[ConfidenceScores] = None
@@ -111,53 +117,57 @@ class MetadataAnalysis(BaseModel):
 
 class Playlist(BaseModel):
     """Represents a playlist with summary information.
-    
+
     Contains playlist metadata including name, description, track count,
     total duration, and timestamps for creation and updates.
     """
+
     id: Optional[UUID] = None
     name: Optional[str] = None
     description: Optional[str] = None
     track_count: Optional[int] = None
-    total_duration: Optional[int] = Field(None, description='Total duration in seconds')
+    total_duration: Optional[int] = Field(None, description="Total duration in seconds")
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
 
 class PlaylistDetail(Playlist):
     """Extended playlist model that includes the list of tracks.
-    
+
     Inherits all fields from Playlist and adds the full list of Track objects
     that belong to this playlist.
     """
+
     tracks: Optional[List[Track]] = None
 
 
 class LibraryOverview(BaseModel):
     """Summary statistics and overview of the entire music library.
-    
+
     Provides aggregated information about the library including total tracks,
     duration, size, genre count, average BPM, most common key, and metadata
     completeness metrics.
     """
+
     total_tracks: Optional[int] = None
-    total_duration: Optional[int] = Field(None, description='Total duration in seconds')
-    total_size: Optional[int] = Field(None, description='Total size in bytes')
+    total_duration: Optional[int] = Field(None, description="Total duration in seconds")
+    total_size: Optional[int] = Field(None, description="Total size in bytes")
     total_genres: Optional[int] = None
     average_bpm: Optional[float] = None
     most_common_key: Optional[str] = None
     metadata_completeness: Optional[float] = Field(
-        None, description='Percentage of tracks with complete metadata'
+        None, description="Percentage of tracks with complete metadata"
     )
     tracks_missing_metadata: Optional[int] = None
 
 
 class Pagination(BaseModel):
     """Pagination metadata for paginated API responses.
-    
+
     Contains information about the current page, page size, total pages,
     total items, and navigation flags for previous/next pages.
     """
+
     page: Optional[int] = None
     size: Optional[int] = None
     total_pages: Optional[int] = None
@@ -168,23 +178,25 @@ class Pagination(BaseModel):
 
 class TracksListResponse(BaseModel):
     """Response wrapper for paginated track listings.
-    
+
     Contains the list of tracks and pagination information for navigating
     through large result sets.
     """
+
     data: Optional[List[Track]] = None
     pagination: Optional[Pagination] = None
 
 
 class ScanLibraryRequest(BaseModel):
     """Request schema for scanning music library folders.
-    
+
     Specifies the folders to scan, whether to include subfolders,
     whether to watch for changes, and whether to skip duplicate files.
     """
+
     paths: List[str] = Field(
         ...,
-        example=['/Users/username/Music/DJ Collection', '/Users/username/Downloads'],
+        example=["/Users/username/Music/DJ Collection", "/Users/username/Downloads"],
     )
     include_subfolders: Optional[bool] = True
     watch_for_changes: Optional[bool] = True
@@ -193,72 +205,82 @@ class ScanLibraryRequest(BaseModel):
 
 class ScanLibraryResponse(BaseModel):
     """Response schema for library scan operation.
-    
+
     Contains the scan ID, current status, and a descriptive message
     about the scan operation.
     """
+
     scan_id: Optional[UUID] = None
-    status: Optional[str] = Field(None, example='scanning')
-    message: Optional[str] = Field(None, example='Library scan started')
+    status: Optional[str] = Field(None, example="scanning")
+    message: Optional[str] = Field(None, example="Library scan started")
 
 
 class HealthResponse(BaseModel):
     """Health check response indicating API status.
-    
+
     Provides the current health status, API version, and timestamp
     of the health check.
     """
-    status: Optional[str] = Field(None, example='healthy')
-    version: Optional[str] = Field(None, example='1.0.0')
+
+    status: Optional[str] = Field(None, example="healthy")
+    version: Optional[str] = Field(None, example="1.0.0")
     timestamp: Optional[datetime] = None
 
 
 class Status(Enum):
     """Status values for library scan operations."""
-    DISCOVERING = 'discovering'
-    SCANNING = 'scanning'
-    COMPLETED = 'completed'
-    FAILED = 'failed'
+
+    DISCOVERING = "discovering"
+    SCANNING = "scanning"
+    COMPLETED = "completed"
+    FAILED = "failed"
 
 
 class ScanStatusResponse(BaseModel):
     """Detailed status information for a library scan operation.
-    
+
     Includes progress metrics, file counts (scanned, added, skipped),
     and any errors encountered during the scan.
     """
+
     scan_id: Optional[UUID] = None
     status: Optional[Status] = None
-    message: Optional[str] = Field(None, description="Current stage message (e.g., 'Discovering audio files...')")
+    message: Optional[str] = Field(
+        None, description="Current stage message (e.g., 'Discovering audio files...')"
+    )
     progress: Optional[float] = Field(None, example=75.5)
     files_scanned: Optional[int] = Field(None, example=1247)
     files_added: Optional[int] = Field(None, example=1200)
     files_skipped: Optional[int] = Field(None, example=47)
     errors: Optional[List[str]] = None
+    paths: Optional[List[str]] = Field(None, description="List of paths being scanned")
 
 
 class BulkDeleteTracksRequest(BaseModel):
     """Request to delete multiple tracks from the library.
-    
+
     Contains a list of track IDs to be deleted in a single operation.
     """
+
     track_ids: Optional[List[UUID]] = None
 
 
 class BulkDeleteTracksResponse(BaseModel):
     """Response from bulk track deletion operation.
-    
+
     Indicates how many tracks were successfully deleted.
     """
+
     deleted_count: Optional[int] = None
 
 
 class AnalysisOptions(BaseModel):
     """Options for controlling metadata analysis behavior.
-    
+
     Allows selective enabling/disabling of specific metadata detection
     features during audio file analysis.
     """
+
     detect_bpm: Optional[bool] = True
     detect_key: Optional[bool] = True
     detect_genre: Optional[bool] = False
@@ -266,38 +288,42 @@ class AnalysisOptions(BaseModel):
 
 class AnalyzeMetadataRequest(BaseModel):
     """Request to analyze metadata for a single audio file.
-    
+
     Specifies the file path to analyze and optional analysis configuration
     to control which metadata fields should be detected.
     """
-    file_path: Optional[str] = Field(None, example='/path/to/track.mp3')
+
+    file_path: Optional[str] = Field(None, example="/path/to/track.mp3")
     analysis_options: Optional[AnalysisOptions] = None
 
 
 class BatchAnalyzeMetadataRequest(BaseModel):
     """Request to analyze metadata for multiple tracks.
-    
+
     Contains a list of track IDs to be analyzed in a batch operation.
     """
+
     track_ids: Optional[List[UUID]] = None
 
 
 class BatchAnalyzeMetadataResponse(BaseModel):
     """Response from batch metadata analysis operation.
-    
+
     Returns a job ID that can be used to track the progress of the
     asynchronous batch analysis operation.
     """
+
     job_id: Optional[UUID] = None
-    status: Optional[str] = Field(None, example='processing')
+    status: Optional[str] = Field(None, example="processing")
 
 
 class EnhancementOptions(BaseModel):
     """Options for controlling AI metadata enhancement behavior.
-    
+
     Allows selective enabling/disabling of specific metadata enhancement
     features when using AI to fill in missing track information.
     """
+
     enhance_genre: Optional[bool] = True
     enhance_mood: Optional[bool] = True
     enhance_bpm: Optional[bool] = True
@@ -306,20 +332,22 @@ class EnhancementOptions(BaseModel):
 
 class EnhanceMetadataRequest(BaseModel):
     """Request to enhance track metadata using AI.
-    
+
     Specifies the track to enhance and optional configuration for
     which metadata fields should be enhanced.
     """
+
     track_id: UUID
     enhancement_options: Optional[EnhancementOptions] = None
 
 
 class EnhancedFields(BaseModel):
     """Metadata fields that were enhanced by AI.
-    
+
     Contains the actual values that were added or updated by the
     AI enhancement process.
     """
+
     genre: Optional[str] = None
     mood: Optional[str] = None
     bpm: Optional[int] = None
@@ -328,21 +356,23 @@ class EnhancedFields(BaseModel):
 
 class ConfidenceScores1(BaseModel):
     """Confidence scores for AI-enhanced metadata values.
-    
+
     Provides reliability scores (typically 0.0 to 1.0) for AI-enhanced
     metadata fields, indicating how confident the AI model is in the
     accuracy of each enhanced value.
     """
+
     genre: Optional[float] = None
     mood: Optional[float] = None
 
 
 class EnhanceMetadataResponse(BaseModel):
     """Response from AI metadata enhancement operation.
-    
+
     Contains the enhanced metadata fields and confidence scores
     indicating the reliability of the AI-generated values.
     """
+
     track_id: Optional[UUID] = None
     enhanced_fields: Optional[EnhancedFields] = None
     confidence_scores: Optional[ConfidenceScores1] = None
@@ -350,48 +380,53 @@ class EnhanceMetadataResponse(BaseModel):
 
 class EnhancementOptions1(BaseModel):
     """Options for batch AI metadata enhancement operations.
-    
+
     Simplified options for batch enhancement, focusing on the most
     commonly enhanced fields.
     """
+
     enhance_genre: Optional[bool] = True
     enhance_mood: Optional[bool] = True
 
 
 class BatchEnhanceMetadataRequest(BaseModel):
     """Request to enhance metadata for multiple tracks using AI.
-    
+
     Contains a list of track IDs to be enhanced and optional configuration
     for the batch enhancement operation.
     """
+
     track_ids: Optional[List[UUID]] = None
     enhancement_options: Optional[EnhancementOptions1] = None
 
 
 class BatchEnhanceMetadataResponse(BaseModel):
     """Response from batch AI metadata enhancement operation.
-    
+
     Returns a job ID and total track count for tracking the progress
     of the asynchronous batch enhancement operation.
     """
+
     job_id: Optional[UUID] = None
     total_tracks: Optional[int] = None
 
 
 class Status1(Enum):
     """Status values for enhancement job operations."""
-    PENDING = 'pending'
-    PROCESSING = 'processing'
-    COMPLETED = 'completed'
-    FAILED = 'failed'
+
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
 
 
 class EnhancementJobStatus(BaseModel):
     """Status information for an asynchronous enhancement job.
-    
+
     Provides detailed progress information including current status,
     progress percentage, track counts, and timestamps for job lifecycle.
     """
+
     job_id: Optional[UUID] = None
     status: Optional[Status1] = None
     progress: Optional[float] = None
@@ -403,116 +438,128 @@ class EnhancementJobStatus(BaseModel):
 
 class CreatePlaylistRequest(BaseModel):
     """Request to create a new playlist.
-    
+
     Requires a playlist name and optionally allows setting a description
     for the new playlist.
     """
-    name: str = Field(..., example='Summer House Mix')
+
+    name: str = Field(..., example="Summer House Mix")
     description: Optional[str] = Field(
-        None, example='High energy house tracks for summer sets'
+        None, example="High energy house tracks for summer sets"
     )
 
 
 class UpdatePlaylistRequest(BaseModel):
     """Request to update playlist metadata.
-    
+
     Allows updating the playlist name and/or description.
     All fields are optional for partial updates.
     """
+
     name: Optional[str] = None
     description: Optional[str] = None
 
 
 class AddTracksToPlaylistRequest(BaseModel):
     """Request to add tracks to a playlist.
-    
+
     Contains a list of track IDs to be added to the specified playlist.
     """
+
     track_ids: Optional[List[UUID]] = None
 
 
 class RemoveTracksFromPlaylistRequest(BaseModel):
     """Request to remove tracks from a playlist.
-    
+
     Contains a list of track IDs to be removed from the specified playlist.
     """
+
     track_ids: Optional[List[UUID]] = None
 
 
 class Format(Enum):
     """Supported playlist export formats."""
-    M3U = 'm3u'
-    PLS = 'pls'
-    XSPF = 'xspf'
-    JSON = 'json'
+
+    M3U = "m3u"
+    PLS = "pls"
+    XSPF = "xspf"
+    JSON = "json"
 
 
 class ExportPlaylistRequest(BaseModel):
     """Request to export a playlist to a file.
-    
+
     Specifies the export format and optional output path for the
     exported playlist file.
     """
+
     format: Optional[Format] = Format.M3U
     output_path: Optional[str] = None
 
 
 class ExportPlaylistResponse(BaseModel):
     """Response from playlist export operation.
-    
+
     Contains the file path where the playlist was exported and
     the format that was used.
     """
+
     file_path: Optional[str] = None
     format: Optional[str] = None
 
 
 class DistributionItem(BaseModel):
     """Single item in a BPM distribution analysis.
-    
+
     Represents one range in the BPM distribution with its count
     and percentage of total tracks.
     """
-    range: Optional[str] = Field(None, example='120-140')
+
+    range: Optional[str] = Field(None, example="120-140")
     count: Optional[int] = None
     percentage: Optional[float] = None
 
 
 class BPMDistributionResponse(BaseModel):
     """BPM distribution analysis results.
-    
+
     Contains a list of BPM ranges with track counts and percentages,
     showing how tracks are distributed across different BPM ranges.
     """
+
     distribution: Optional[List[DistributionItem]] = None
 
 
 class DistributionItem1(BaseModel):
     """Single item in a key distribution analysis.
-    
+
     Represents one musical key in the distribution with its count
     and percentage of total tracks.
     """
-    key: Optional[str] = Field(None, example='Am')
+
+    key: Optional[str] = Field(None, example="Am")
     count: Optional[int] = None
     percentage: Optional[float] = None
 
 
 class KeyDistributionResponse(BaseModel):
     """Musical key distribution analysis results.
-    
+
     Contains a list of musical keys with track counts and percentages,
     showing how tracks are distributed across different keys.
     """
+
     distribution: Optional[List[DistributionItem1]] = None
 
 
 class DistributionItem2(BaseModel):
     """Single item in a genre distribution analysis.
-    
+
     Represents one genre in the distribution with its count
     and percentage of total tracks.
     """
+
     genre: Optional[str] = None
     count: Optional[int] = None
     percentage: Optional[float] = None
@@ -520,19 +567,21 @@ class DistributionItem2(BaseModel):
 
 class GenreDistributionResponse(BaseModel):
     """Genre distribution analysis results.
-    
+
     Contains a list of genres with track counts and percentages,
     showing how tracks are distributed across different genres.
     """
+
     distribution: Optional[List[DistributionItem2]] = None
 
 
 class DistributionItem3(BaseModel):
     """Single item in a mood distribution analysis.
-    
+
     Represents one mood in the distribution with its count
     and percentage of total tracks.
     """
+
     mood: Optional[str] = None
     count: Optional[int] = None
     percentage: Optional[float] = None
@@ -540,8 +589,9 @@ class DistributionItem3(BaseModel):
 
 class MoodDistributionResponse(BaseModel):
     """Mood distribution analysis results.
-    
+
     Contains a list of moods with track counts and percentages,
     showing how tracks are distributed across different moods.
     """
+
     distribution: Optional[List[DistributionItem3]] = None

@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button, IconButton } from "../../../atoms";
+import { IconButton } from "../../atoms";
 
 type PaginationControlProps = {
   currentPage: number;

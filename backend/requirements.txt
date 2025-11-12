@@ -13,4 +13,5 @@ aiofiles
 cachetools
 black
 datamodel-code-generator
+ruff
 

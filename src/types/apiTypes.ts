@@ -1219,6 +1219,14 @@ export interface components {
             files_skipped?: number;
             /** @description List of errors encountered during the scan */
             errors?: string[];
+            /**
+             * @description List of paths being scanned
+             * @example [
+             *       "/Users/username/Music",
+             *       "/Users/username/Documents/Music"
+             *     ]
+             */
+            paths?: string[];
         };
         BulkDeleteTracksRequest: {
             track_ids?: string[];
