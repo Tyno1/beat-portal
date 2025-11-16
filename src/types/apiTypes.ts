@@ -157,7 +157,7 @@ export interface paths {
                     bpm_min?: number;
                     bpm_max?: number;
                     key?: string;
-                    sort_by?: "title" | "artist" | "bpm" | "key" | "year" | "date_added";
+                    sort_by?: "title" | "artist" | "bpm" | "key" | "year" | "created_at";
                     sort_order?: "asc" | "desc";
                 };
                 header?: never;
@@ -1051,14 +1051,16 @@ export interface components {
             bpm?: number;
             key?: string;
             /** @description Duration in seconds */
-            duration?: number;
+            duration_seconds?: number;
             file_path?: string;
             /** @description File size in bytes */
-            file_size?: number;
+            file_size_bytes?: number;
             /** @example mp3 */
             file_format?: string;
-            bitrate?: number;
-            sample_rate?: number;
+            /** @description Bitrate in bits per second */
+            bitrate_bps?: number;
+            /** @description Sample rate in Hertz (Hz) */
+            sample_rate_hz?: number;
             /** Format: date-time */
             created_at?: string;
             /** Format: date-time */
@@ -1092,9 +1094,12 @@ export interface components {
         DetectedMetadata: {
             bpm?: number;
             key?: string;
-            duration?: number;
-            sample_rate?: number;
-            bitrate?: number;
+            /** @description Duration in seconds */
+            duration_seconds?: number;
+            /** @description Sample rate in Hertz (Hz) */
+            sample_rate_hz?: number;
+            /** @description Bitrate in bits per second */
+            bitrate_bps?: number;
         };
         ConfidenceScores: {
             /** Format: float */
@@ -1114,7 +1119,7 @@ export interface components {
             description?: string;
             track_count?: number;
             /** @description Total duration in seconds */
-            total_duration?: number;
+            total_duration_seconds?: number;
             /** Format: date-time */
             created_at?: string;
             /** Format: date-time */
@@ -1126,9 +1131,9 @@ export interface components {
         LibraryOverview: {
             total_tracks?: number;
             /** @description Total duration in seconds */
-            total_duration?: number;
+            total_duration_seconds?: number;
             /** @description Total size in bytes */
-            total_size?: number;
+            total_size_bytes?: number;
             total_genres?: number;
             /** Format: float */
             average_bpm?: number;
@@ -1254,6 +1259,8 @@ export interface components {
             job_id?: string;
             /** @example processing */
             status?: string;
+            /** @description List of errors encountered during the batch analysis */
+            errors?: string[];
         };
         EnhanceMetadataRequest: {
             /** Format: uuid */

@@ -7,18 +7,10 @@ import {
 } from "@tanstack/react-table";
 import { ArrowUpDown, MoreVertical } from "lucide-react";
 import { useState } from "react";
+import type { components } from "../../../types/apiTypes";
 import { IconButton } from "../../atoms";
 
-export interface Track {
-  id: number;
-  trackName: string;
-  artist: string;
-  year: number;
-  bpm: number;
-  key: string;
-  genre: string;
-  mood: string;
-}
+export type Track = components["schemas"]["Track"];
 
 interface TrackTableProps {
   data: Track[];
@@ -42,7 +34,7 @@ export default function TrackTable({ data }: TrackTableProps) {
       ),
     },
     {
-      accessorKey: "trackName",
+      accessorKey: "title",
       header: ({ column }) => (
         <button
           type="button"

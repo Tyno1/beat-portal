@@ -12,7 +12,7 @@ export default function TrackGrid({ data }: TrackGridProps) {
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 			{data.map((track, index) => (
 				<Card
-					key={`${track.id}-${track.trackName}-${track.artist}-${index}`}
+					key={`${track.id}-${track.title}-${track.artist}-${index}`}
 					variant="outlined"
 					radius="xl"
 					className="hover:shadow-lg transition-all duration-200 cursor-pointer group"
@@ -39,47 +39,59 @@ export default function TrackGrid({ data }: TrackGridProps) {
 						<div className="space-y-2">
 							<div>
 								<h3 className="font-semibold text-foreground text-sm leading-tight line-clamp-2">
-									{track.trackName}
+									{track.title || "Unknown Title"}
 								</h3>
 								<p className="text-xs text-muted-foreground mt-1">
-									{track.artist}
+									{track.artist || "Unknown Artist"}
 								</p>
 							</div>
 
 							<div className="flex flex-wrap gap-2 mt-3">
-								<Badge color="muted" variant="outline" size="sm">
-									{track.genre}
-								</Badge>
-								<Badge color="muted" variant="outline" size="sm">
-									{track.mood}
-								</Badge>
+								{track.genre && (
+									<Badge color="muted" variant="outline" size="sm">
+										{track.genre}
+									</Badge>
+								)}
+								{track.mood && (
+									<Badge color="muted" variant="outline" size="sm">
+										{track.mood}
+									</Badge>
+								)}
 							</div>
 
 							<div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border">
-								<div>
-									<p className="text-xs text-muted-foreground">BPM</p>
-									<p className="text-sm font-medium text-foreground">
-										{track.bpm}
-									</p>
-								</div>
-								<div>
-									<p className="text-xs text-muted-foreground">Key</p>
-									<p className="text-sm font-medium text-foreground">
-										{track.key}
-									</p>
-								</div>
-								<div>
-									<p className="text-xs text-muted-foreground">Year</p>
-									<p className="text-sm font-medium text-foreground">
-										{track.year}
-									</p>
-								</div>
-								<div>
-									<p className="text-xs text-muted-foreground">ID</p>
-									<p className="text-sm font-medium text-foreground">
-										{track.id}
-									</p>
-								</div>
+								{track.bpm && (
+									<div>
+										<p className="text-xs text-muted-foreground">BPM</p>
+										<p className="text-sm font-medium text-foreground">
+											{track.bpm}
+										</p>
+									</div>
+								)}
+								{track.key && (
+									<div>
+										<p className="text-xs text-muted-foreground">Key</p>
+										<p className="text-sm font-medium text-foreground">
+											{track.key}
+										</p>
+									</div>
+								)}
+								{track.year && (
+									<div>
+										<p className="text-xs text-muted-foreground">Year</p>
+										<p className="text-sm font-medium text-foreground">
+											{track.year}
+										</p>
+									</div>
+								)}
+								{track.id && (
+									<div>
+										<p className="text-xs text-muted-foreground">ID</p>
+										<p className="text-sm font-medium text-foreground truncate">
+											{track.id.slice(0, 8)}
+										</p>
+									</div>
+								)}
 							</div>
 						</div>
 					</CardContent>

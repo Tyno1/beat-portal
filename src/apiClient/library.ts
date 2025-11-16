@@ -1,16 +1,11 @@
-import axios from "axios";
 import type {
 	GetScanStatusResponse,
 	PostScanLibraryRequest,
 	PostScanLibraryResponse,
-} from "./types/Library";
+} from "../types/Library";
+import { apiClient } from "./client";
 
-const apiClient = axios.create({
-	baseURL: "http://127.0.0.1:8000",
-});
-
-// API Methods
-const scanLibrary = async (
+export const scanLibrary = async (
 	paths: string[],
 	options?: {
 		include_subfolders?: boolean;
@@ -32,7 +27,7 @@ const scanLibrary = async (
 	return response.data;
 };
 
-const getScanStatus = async (
+export const getScanStatus = async (
 	scanId: string,
 ): Promise<GetScanStatusResponse> => {
 	const response = await apiClient.get<GetScanStatusResponse>(
@@ -41,10 +36,10 @@ const getScanStatus = async (
 	return response.data;
 };
 
-// Export
-const apiClientExports = {
+const libraryApi = {
 	scanLibrary,
 	getScanStatus,
 };
 
-export default apiClientExports;
+export default libraryApi;
+
