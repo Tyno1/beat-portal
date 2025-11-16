@@ -1,10 +1,8 @@
 import { PanelLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { useLibraryOverview } from "../../hooks";
 import useResize from "../../hooks/useResize";
 import { Badge, IconButton, ThemeToggle } from "../atoms";
-import { Card, CardContent } from "../molecules";
 import LibraryOverview from "../ui/Library/LibraryOverview";
 import ProgressIndicator from "../ui/Scan/ProgressIndicator";
 
@@ -23,7 +21,6 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
 	const [isMenuOpen, setIsMenuOpen] = useState(true);
 	const [mode, _setMode] = useState<"online" | "offline">("online");
 	const { breakpoint, size } = useResize();
-	const { data: libraryOverviewData } = useLibraryOverview();
 
 	const handleToggleMenu = () => {
 		setIsMenuOpen(!isMenuOpen);
@@ -114,7 +111,7 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
 				<div className="p-4 w-full border-t border-border flex flex-col gap-2 items-center">
 
 					{isMenuOpen && <LibraryOverview />}
-          
+
 					<div className="flex flex-wrap gap-2 items-center justify-center">
 						<Badge
 							color={mode === "online" ? "success" : "destructive"}
