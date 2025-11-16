@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import apiClient from "../apiClient";
+import { library } from "../apiClient";
 import type {
 	GetScanStatusResponse,
 	PostScanLibraryResponse,
@@ -25,7 +25,7 @@ export function useScanStatus(scanId: string | null) {
 		queryKey: ["scanStatus", scanId],
 		queryFn: () => {
 			if (!scanId) throw new Error("Scan ID is required");
-			return apiClient.getScanStatus(scanId);
+			return library.getScanStatus(scanId);
 		},
 		enabled: !!scanId,
 		refetchInterval: (query) => {
@@ -48,7 +48,7 @@ export function useActiveScanStatus() {
 
 export function useStartScan() {
 	return useMutation<PostScanLibraryResponse, AxiosError, string[]>({
-		mutationFn: (paths: string[]) => apiClient.scanLibrary(paths),
+		mutationFn: (paths: string[]) => library.scanLibrary(paths),
 		onSuccess: (data) => {
 			// Clear any existing scan ID and save new one when scan starts
 			if (data.scan_id) {

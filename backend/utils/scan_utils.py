@@ -32,32 +32,32 @@ def _get_file_props(file_path: str) -> dict:
                 suffix = Path(file_path).suffix
                 file_format = suffix[1:].lower() if suffix else None
                 return {
-                    "file_size": None,
+                    "file_size_bytes": None,
                     "file_format": file_format,
-                    "duration": None,
-                    "bitrate": None,
-                    "sample_rate": None,
+                    "duration_seconds": None,
+                    "bitrate_bps": None,
+                    "sample_rate_hz": None,
                 }
     except OSError:
         # If stat fails, return minimal props
         suffix = Path(file_path).suffix
         file_format = suffix[1:].lower() if suffix else None
         return {
-            "file_size": None,
+            "file_size_bytes": None,
             "file_format": file_format,
-            "duration": None,
-            "bitrate": None,
-            "sample_rate": None,
+            "duration_seconds": None,
+            "bitrate_bps": None,
+            "sample_rate_hz": None,
         }
 
     suffix = Path(file_path).suffix
     file_format = suffix[1:].lower() if suffix else None
     return {
-        "file_size": file_stat.st_size,
+        "file_size_bytes": file_stat.st_size,
         "file_format": file_format,
-        "duration": None,
-        "bitrate": None,
-        "sample_rate": None,
+        "duration_seconds": None,
+        "bitrate_bps": None,
+        "sample_rate_hz": None,
     }
 
 
@@ -88,9 +88,11 @@ def _extract_tags(audio_file):
     artist = None
     album = None
     genre = None
+    bpm = None
+    key = None
 
     if not (hasattr(audio_file, "tags") and audio_file.tags):
-        return title, artist, album, None, genre
+        return title, artist, album, None, genre, bpm, key
 
     tags = audio_file.tags
     title = _extract_tag(tags, ["TIT2", "TITLE", "©nam"])
@@ -99,7 +101,21 @@ def _extract_tags(audio_file):
     genre = _extract_tag(tags, ["TCON", "GENRE", "©gen"])
     year = _extract_year(tags)
 
-    return title, artist, album, year, genre
+    # Extract BPM from tags (TBPM is ID3v2 standard, BPM is common alternative)
+    bpm_str = _extract_tag(tags, ["TBPM", "BPM", "BPM "])
+    if bpm_str:
+        try:
+            bpm = int(float(bpm_str))
+        except (ValueError, TypeError):
+            bpm = None
+
+    # Extract Key from tags (TKEY is ID3v2 standard, KEY is common alternative)
+    key = _extract_tag(tags, ["TKEY", "KEY", "INITIALKEY", "KEY "])
+    # Normalize key format (remove whitespace, standardize)
+    if key:
+        key = key.strip().upper()
+
+    return title, artist, album, year, genre, bpm, key
 
 
 def _extract_audio_properties(audio_file, file_props):
@@ -109,11 +125,11 @@ def _extract_audio_properties(audio_file, file_props):
 
     info = audio_file.info
     if hasattr(info, "length"):
-        file_props["duration"] = int(info.length)
+        file_props["duration_seconds"] = int(info.length)
     if hasattr(info, "bitrate"):
-        file_props["bitrate"] = info.bitrate
+        file_props["bitrate_bps"] = info.bitrate
     if hasattr(info, "sample_rate"):
-        file_props["sample_rate"] = int(info.sample_rate)
+        file_props["sample_rate_hz"] = int(info.sample_rate)
 
 
 def _create_error_response(
@@ -224,7 +240,7 @@ def _extract_metadata_sync(file_path: str) -> Tuple[TrackCreate, Optional[str], 
         return _create_error_response(file_path, f"Unable to read file: {file_path}")
 
     file_props = _get_file_props(file_path)
-    title, artist, album, year, genre = _extract_tags(audio_file)
+    title, artist, album, year, genre, bpm, key = _extract_tags(audio_file)
     _extract_audio_properties(audio_file, file_props)
 
     if not title:
@@ -237,6 +253,8 @@ def _extract_metadata_sync(file_path: str) -> Tuple[TrackCreate, Optional[str], 
         album=album,
         year=year,
         genre=genre,
+        bpm=bpm,
+        key=key,
     )
 
     return track_data, None, file_props

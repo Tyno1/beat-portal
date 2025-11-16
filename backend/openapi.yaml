@@ -141,7 +141,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [title, artist, bpm, key, year, date_added]
+            enum: [title, artist, bpm, key, year, created_at]
             default: title
         - name: sort_order
           in: query
@@ -622,21 +622,23 @@ components:
           type: integer
         key:
           type: string
-        duration:
+        duration_seconds:
           type: integer
           description: Duration in seconds
         file_path:
           type: string
-        file_size:
+        file_size_bytes:
           type: integer
           description: File size in bytes
         file_format:
           type: string
           example: mp3
-        bitrate:
+        bitrate_bps:
           type: integer
-        sample_rate:
+          description: Bitrate in bits per second
+        sample_rate_hz:
           type: integer
+          description: Sample rate in Hertz (Hz)
         created_at:
           type: string
           format: date-time
@@ -702,12 +704,15 @@ components:
           type: integer
         key:
           type: string
-        duration:
+        duration_seconds:
           type: integer
-        sample_rate:
+          description: Duration in seconds
+        sample_rate_hz:
           type: integer
-        bitrate:
+          description: Sample rate in Hertz (Hz)
+        bitrate_bps:
           type: integer
+          description: Bitrate in bits per second
 
     ConfidenceScores:
       type: object
@@ -741,7 +746,7 @@ components:
           type: string
         track_count:
           type: integer
-        total_duration:
+        total_duration_seconds:
           type: integer
           description: Total duration in seconds
         created_at:
@@ -766,10 +771,10 @@ components:
       properties:
         total_tracks:
           type: integer
-        total_duration:
+        total_duration_seconds:
           type: integer
           description: Total duration in seconds
-        total_size:
+        total_size_bytes:
           type: integer
           description: Total size in bytes
         total_genres:
@@ -953,6 +958,11 @@ components:
         status:
           type: string
           example: processing
+        errors:
+          type: array
+          items:
+            type: string
+          description: List of errors encountered during the batch analysis
 
     EnhanceMetadataRequest:
       type: object

@@ -14,4 +14,7 @@ cachetools
 black
 datamodel-code-generator
 ruff
+librosa
+numpy
+scipy
 
