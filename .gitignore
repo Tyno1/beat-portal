@@ -43,6 +43,16 @@ src-tauri/gen/
 coverage/
 .nyc_output/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.db
+*.sqlite
+*.sqlite3
+
 # Misc
 *.tsbuildinfo
 .eslintcache
