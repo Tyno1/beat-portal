@@ -61,7 +61,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 		const variantClasses = {
 			default: "bg-input border-input-border focus-visible:border-transparent",
-			filled: "bg-input border-transparent focus-visible:border-transparent",
+			filled: "bg-input border-transparent focus-visible:border-transparent text-input-foreground",
 			outline: "bg-transparent border-input-border focus-visible:border-transparent",
 			ghost: "bg-transparent border-transparent focus-visible:bg-input",
 			alt: "bg-input-foreground border-input-foreground-border focus-visible:border-transparent",

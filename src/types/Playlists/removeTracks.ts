@@ -6,5 +6,4 @@ export type DeleteTracksFromPlaylistRequest = {
 };
 
 export type DeleteTracksFromPlaylistResponse =
-	paths["/playlists/{playlist_id}/tracks"]["delete"]["responses"]["200"]["content"]["application/json"];
-
+	paths["/playlists/{playlist_id}/tracks"]["delete"]["responses"]["200"];

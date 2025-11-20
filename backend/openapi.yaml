@@ -35,6 +35,8 @@ tags:
     description: Library statistics and analysis
   - name: System
     description: System and health check endpoints
+  - name: Reference Data
+    description: Reference data endpoints for filters and stable values
 
 paths:
   /health:
@@ -105,7 +107,8 @@ paths:
           in: query
           schema:
             type: integer
-            default: 0
+            default: 1
+            minimum: 1
         - name: size
           in: query
           schema:
@@ -137,12 +140,27 @@ paths:
           in: query
           schema:
             type: string
+        - name: artist
+          in: query
+          description: Filter by exact artist name
+          schema:
+            type: string
+        - name: year_min
+          in: query
+          description: Minimum year (inclusive)
+          schema:
+            type: integer
+        - name: year_max
+          in: query
+          description: Maximum year (inclusive)
+          schema:
+            type: integer
         - name: sort_by
           in: query
           schema:
             type: string
-            enum: [title, artist, bpm, key, year, date_added]
-            default: date_added
+            enum: [title, artist, bpm, key, year, created_at]
+            default: title
         - name: sort_order
           in: query
           schema:
@@ -260,6 +278,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BulkDeleteTracksResponse'
+
+  /tracks/{track_id}/reset-metadata:
+    post:
+      tags:
+        - Tracks
+      summary: Reset Track Metadata
+      description: Reset track metadata to original values from the audio file. Reads metadata directly from file tags.
+      parameters:
+        - name: track_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID of the track to reset
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetMetadataRequest'
+      responses:
+        '200':
+          description: Metadata reset successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetMetadataResponse'
+        '400':
+          description: Bad request (e.g., track has no file path)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+        '404':
+          description: Track not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+        '500':
+          description: Error reading metadata from file
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
 
   /metadata/analyze:
     post:
@@ -598,6 +671,98 @@ paths:
               schema:
                 $ref: '#/components/schemas/MoodDistributionResponse'
 
+  /refdata/{refdata_type}:
+    get:
+      tags:
+        - Reference Data
+      summary: Get Reference Data
+      description: Get reference data for filters and other stable values
+      parameters:
+        - name: refdata_type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/RefdataType'
+          description: Type of reference data to retrieve
+      responses:
+        '200':
+          description: Reference data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefdataResponse'
+        '404':
+          description: Reference data type not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+    post:
+      tags:
+        - Reference Data
+      summary: Create or Update Reference Data
+      description: Create or update reference data entries for a specific type and key
+      parameters:
+        - name: refdata_type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/RefdataType'
+          description: Type of reference data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRefdataRequest'
+      responses:
+        '201':
+          description: Reference data created or updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRefdataResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+    delete:
+      tags:
+        - Reference Data
+      summary: Delete All Reference Data for Type
+      description: Delete all reference data entries for a given type
+      parameters:
+        - name: refdata_type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/RefdataType'
+          description: Type of reference data to delete
+      responses:
+        '200':
+          description: Reference data deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteRefdataResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+
 components:
   schemas:
     Track:
@@ -622,21 +787,23 @@ components:
           type: integer
         key:
           type: string
-        duration:
+        duration_seconds:
           type: integer
           description: Duration in seconds
         file_path:
           type: string
-        file_size:
+        file_size_bytes:
           type: integer
           description: File size in bytes
         file_format:
           type: string
           example: mp3
-        bitrate:
+        bitrate_bps:
           type: integer
-        sample_rate:
+          description: Bitrate in bits per second
+        sample_rate_hz:
           type: integer
+          description: Sample rate in Hertz (Hz)
         created_at:
           type: string
           format: date-time
@@ -702,12 +869,15 @@ components:
           type: integer
         key:
           type: string
-        duration:
+        duration_seconds:
           type: integer
-        sample_rate:
+          description: Duration in seconds
+        sample_rate_hz:
           type: integer
-        bitrate:
+          description: Sample rate in Hertz (Hz)
+        bitrate_bps:
           type: integer
+          description: Bitrate in bits per second
 
     ConfidenceScores:
       type: object
@@ -741,7 +911,7 @@ components:
           type: string
         track_count:
           type: integer
-        total_duration:
+        total_duration_seconds:
           type: integer
           description: Total duration in seconds
         created_at:
@@ -766,10 +936,10 @@ components:
       properties:
         total_tracks:
           type: integer
-        total_duration:
+        total_duration_seconds:
           type: integer
           description: Total duration in seconds
-        total_size:
+        total_size_bytes:
           type: integer
           description: Total size in bytes
         total_genres:
@@ -894,6 +1064,12 @@ components:
           items:
             type: string
           description: List of errors encountered during the scan
+        paths:
+          type: array
+          items:
+            type: string
+          description: List of paths being scanned
+          example: ["/Users/username/Music", "/Users/username/Documents/Music"]
 
     BulkDeleteTracksRequest:
       type: object
@@ -947,6 +1123,46 @@ components:
         status:
           type: string
           example: processing
+        errors:
+          type: array
+          items:
+            type: string
+          description: List of errors encountered during the batch analysis
+
+    ResetMetadataRequest:
+      type: object
+      description: Request to reset track metadata to original values from file
+      properties:
+        update_track:
+          type: boolean
+          default: false
+          description: If true, update the track in the database with original metadata
+
+    ResetMetadataResponse:
+      type: object
+      description: Response from reset metadata operation
+      properties:
+        track_id:
+          type: string
+          format: uuid
+        file_path:
+          type: string
+        original_metadata:
+          type: object
+          description: Original metadata values read from the audio file
+          additionalProperties: true
+          example:
+            title: Song Title
+            artist: Artist Name
+            album: Album Name
+            year: 2020
+            genre: Electronic
+            bpm: 128
+            key: Am
+        updated:
+          type: boolean
+          default: false
+          description: Whether the track was updated in the database
 
     EnhanceMetadataRequest:
       type: object
@@ -1169,4 +1385,96 @@ components:
                 type: integer
               percentage:
                 type: number
-                format: float
+
+    RefdataType:
+      type: string
+      enum:
+        - trackfilters
+      description: Available reference data types. Can be extended with additional types as the project grows.
+      example: trackfilters
+      x-enum-varnames:
+        - TRACKFILTERS
+
+    RefdataItem:
+      type: object
+      description: A single key-value pair in reference data
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          description: The filter category name (e.g., 'genre', 'mood')
+        value:
+          type: array
+          items:
+            type: string
+          description: List of filter options for this category
+
+    RefdataResponse:
+      type: object
+      description: Reference data response as an array of key-value pairs
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RefdataItem'
+          description: Array of reference data categories with their options
+
+    CreateRefdataRequest:
+      type: object
+      description: Request schema for creating or updating reference data
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          description: The filter category name (e.g., 'genre', 'mood')
+        value:
+          type: array
+          items:
+            type: string
+          description: List of values to store for this key
+
+    CreateRefdataResponse:
+      type: object
+      description: Response schema for creating reference data
+      required:
+        - type
+        - key
+        - created_count
+        - updated_count
+      properties:
+        type:
+          type: string
+          description: The reference data type
+        key:
+          type: string
+          description: The filter category name
+        created_count:
+          type: integer
+          description: Number of new entries created
+        updated_count:
+          type: integer
+          description: Number of existing entries updated
+
+    DeleteRefdataResponse:
+      type: object
+      description: Response schema for deleting reference data
+      required:
+        - type
+        - key
+        - deleted_count
+      properties:
+        type:
+          type: string
+          description: The reference data type
+        key:
+          type: string
+          description: The filter category name
+        deleted_count:
+          type: integer
+          description: Number of entries deleted

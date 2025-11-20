@@ -6,5 +6,5 @@ export type PostAddTracksToPlaylistRequest = {
 };
 
 export type PostAddTracksToPlaylistResponse =
-	paths["/playlists/{playlist_id}/tracks"]["post"]["responses"]["200"]["content"]["application/json"];
+	paths["/playlists/{playlist_id}/tracks"]["post"]["responses"]["200"];
 

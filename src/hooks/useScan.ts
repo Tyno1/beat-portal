@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import apiClient from "../apiClient";
+import type { AxiosError } from "axios";
+import { library } from "../apiClient";
 import type {
 	GetScanStatusResponse,
 	PostScanLibraryResponse,
@@ -24,7 +25,7 @@ export function useScanStatus(scanId: string | null) {
 		queryKey: ["scanStatus", scanId],
 		queryFn: () => {
 			if (!scanId) throw new Error("Scan ID is required");
-			return apiClient.getScanStatus(scanId);
+			return library.getScanStatus(scanId);
 		},
 		enabled: !!scanId,
 		refetchInterval: (query) => {
@@ -33,10 +34,8 @@ export function useScanStatus(scanId: string | null) {
 			if (data?.status === "discovering" || data?.status === "scanning") {
 				return 200;
 			}
-			// Clear scan ID when completed or failed
-			if (data?.status === "completed" || data?.status === "failed") {
-				setActiveScanId(null);
-			}
+			// Stop polling when completed or failed, but keep scan ID accessible
+			// The scan ID will be cleared when a new scan starts
 			return false;
 		},
 	});
@@ -48,10 +47,10 @@ export function useActiveScanStatus() {
 }
 
 export function useStartScan() {
-	return useMutation<PostScanLibraryResponse, Error, string[]>({
-		mutationFn: (paths: string[]) => apiClient.scanLibrary(paths),
+	return useMutation<PostScanLibraryResponse, AxiosError, string[]>({
+		mutationFn: (paths: string[]) => library.scanLibrary(paths),
 		onSuccess: (data) => {
-			// Save scan ID to localStorage when scan starts
+			// Clear any existing scan ID and save new one when scan starts
 			if (data.scan_id) {
 				setActiveScanId(data.scan_id);
 			}

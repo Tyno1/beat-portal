@@ -1,0 +1,291 @@
+"""
+Utility functions for scanning and processing audio files.
+"""
+
+import os
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
+from pathlib import Path
+from typing import List, Tuple, Optional
+from mutagen import File as MutagenFile
+from mutagen.id3 import ID3NoHeaderError
+
+from models import TrackCreate
+
+# Timeout for metadata extraction (in seconds)
+METADATA_EXTRACTION_TIMEOUT = 10
+
+
+# DJ-relevant audio formats (excluding formats commonly used in system files)
+AUDIO_EXTENSIONS = {".mp3", ".wav", ".flac", ".ogg", ".aiff", ".aif"}
+
+
+def _get_file_props(file_path: str) -> dict:
+    """Create file properties dictionary with timeout protection."""
+    try:
+        # Use ThreadPoolExecutor to add timeout protection for os.stat
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(os.stat, file_path)
+            try:
+                file_stat = future.result(timeout=5)  # 5 second timeout for stat
+            except FutureTimeoutError:
+                # If stat times out, return minimal props
+                suffix = Path(file_path).suffix
+                file_format = suffix[1:].lower() if suffix else None
+                return {
+                    "file_size_bytes": None,
+                    "file_format": file_format,
+                    "duration_seconds": None,
+                    "bitrate_bps": None,
+                    "sample_rate_hz": None,
+                }
+    except OSError:
+        # If stat fails, return minimal props
+        suffix = Path(file_path).suffix
+        file_format = suffix[1:].lower() if suffix else None
+        return {
+            "file_size_bytes": None,
+            "file_format": file_format,
+            "duration_seconds": None,
+            "bitrate_bps": None,
+            "sample_rate_hz": None,
+        }
+
+    suffix = Path(file_path).suffix
+    file_format = suffix[1:].lower() if suffix else None
+    return {
+        "file_size_bytes": file_stat.st_size,
+        "file_format": file_format,
+        "duration_seconds": None,
+        "bitrate_bps": None,
+        "sample_rate_hz": None,
+    }
+
+
+def _extract_tag(tags, keys):
+    """Extract tag value using multiple possible keys."""
+    for key in keys:
+        if key in tags:
+            return str(tags[key][0])
+    return None
+
+
+def _extract_year(tags):
+    """Extract year from date tags."""
+    year_keys = ["TDRC", "DATE", "©day"]
+    for key in year_keys:
+        if key in tags:
+            try:
+                year_str = str(tags[key][0])
+                return int(year_str[:4])
+            except (ValueError, IndexError):
+                continue
+    return None
+
+
+def _extract_tags(audio_file):
+    """Extract metadata tags from audio file."""
+    title = None
+    artist = None
+    album = None
+    genre = None
+    bpm = None
+    key = None
+
+    if not (hasattr(audio_file, "tags") and audio_file.tags):
+        return title, artist, album, None, genre, bpm, key
+
+    tags = audio_file.tags
+    title = _extract_tag(tags, ["TIT2", "TITLE", "©nam"])
+    artist = _extract_tag(tags, ["TPE1", "ARTIST", "©ART"])
+    album = _extract_tag(tags, ["TALB", "ALBUM", "©alb"])
+    genre = _extract_tag(tags, ["TCON", "GENRE", "©gen"])
+    year = _extract_year(tags)
+
+    # Extract BPM from tags (TBPM is ID3v2 standard, BPM is common alternative)
+    bpm_str = _extract_tag(tags, ["TBPM", "BPM", "BPM "])
+    if bpm_str:
+        try:
+            bpm = int(float(bpm_str))
+        except (ValueError, TypeError):
+            bpm = None
+
+    # Extract Key from tags (TKEY is ID3v2 standard, KEY is common alternative)
+    key = _extract_tag(tags, ["TKEY", "KEY", "INITIALKEY", "KEY "])
+    # Normalize key format (remove whitespace, standardize)
+    if key:
+        key = key.strip().upper()
+
+    return title, artist, album, year, genre, bpm, key
+
+
+def _extract_audio_properties(audio_file, file_props):
+    """Extract audio properties from file info."""
+    if not hasattr(audio_file, "info"):
+        return
+
+    info = audio_file.info
+    if hasattr(info, "length"):
+        file_props["duration_seconds"] = int(info.length)
+    if hasattr(info, "bitrate"):
+        file_props["bitrate_bps"] = info.bitrate
+    if hasattr(info, "sample_rate"):
+        file_props["sample_rate_hz"] = int(info.sample_rate)
+
+
+def _create_error_response(
+    file_path: str, error_msg: str
+) -> Tuple[TrackCreate, str, dict]:
+    """Create error response with minimal file info."""
+    file_props = _get_file_props(file_path)
+    return (
+        TrackCreate(file_path=file_path, title=Path(file_path).stem),
+        error_msg,
+        file_props,
+    )
+
+
+def _should_exclude_path(file_path: Path) -> bool:
+    """
+    Check if a file path should be excluded from scanning.
+    Excludes system directories, application bundles, and common problematic paths.
+    """
+    path_str = str(file_path)
+    parts = file_path.parts
+
+    # Exclude macOS application bundles (.app/Contents paths)
+    if ".app/Contents" in path_str:
+        return True
+
+    # Exclude files inside .app bundles
+    for i, part in enumerate(parts):
+        if part.endswith(".app") and i < len(parts) - 1:
+            return True
+
+    # Exclude common system directories
+    system_dirs = {"/System", "/Library", "/private", "/usr", "/bin", "/sbin"}
+    if any(path_str.startswith(sys_dir) for sys_dir in system_dirs):
+        return True
+
+    # Exclude common problematic directories in home folders
+    problematic_dirs = {
+        "Library",  # macOS Library folder
+        ".Trash",  # Trash
+        ".cache",  # Cache directories
+        ".tmp",  # Temp directories
+        "node_modules",  # Node modules (can be huge)
+        ".git",  # Git repositories
+        ".vscode",  # IDE folders
+        ".idea",  # IDE folders
+        "Applications",  # Applications folder in home
+    }
+    if any(part in problematic_dirs for part in parts):
+        return True
+
+    # Exclude hidden files and directories (starting with .)
+    # But allow .music, .audio, etc. in case user has hidden music folders
+    if any(
+        part.startswith(".") and part not in {".music", ".audio", ".Music", ".Audio"}
+        for part in parts
+    ):
+        # Allow some common hidden music folder names
+        if not any(part.lower() in {".music", ".audio"} for part in parts):
+            return True
+
+    return False
+
+
+def find_audio_files(root_path: str, include_subfolders: bool = True) -> List[str]:
+    """
+    Recursively find all audio files in the given directory.
+
+    Args:
+        root_path: Root directory to scan
+        include_subfolders: Whether to scan subdirectories
+
+    Returns:
+        List of full file paths to audio files
+    """
+    audio_files = []
+    root = Path(root_path)
+
+    if not root.exists() or not root.is_dir():
+        return audio_files
+
+    if include_subfolders:
+        # Recursive scan
+        for ext in AUDIO_EXTENSIONS:
+            for file_path in root.rglob(f"*{ext}"):
+                if not _should_exclude_path(file_path):
+                    audio_files.append(file_path)
+            for file_path in root.rglob(f"*{ext.upper()}"):
+                if not _should_exclude_path(file_path):
+                    audio_files.append(file_path)
+    else:
+        # Only top-level directory
+        for item in root.iterdir():
+            if (
+                item.is_file()
+                and item.suffix.lower() in AUDIO_EXTENSIONS
+                and not _should_exclude_path(item)
+            ):
+                audio_files.append(item)
+
+    return [str(f) for f in audio_files]
+
+
+def _extract_metadata_sync(file_path: str) -> Tuple[TrackCreate, Optional[str], dict]:
+    """Synchronous metadata extraction (called with timeout)."""
+    audio_file = MutagenFile(file_path)
+    if audio_file is None:
+        return _create_error_response(file_path, f"Unable to read file: {file_path}")
+
+    file_props = _get_file_props(file_path)
+    title, artist, album, year, genre, bpm, key = _extract_tags(audio_file)
+    _extract_audio_properties(audio_file, file_props)
+
+    if not title:
+        title = Path(file_path).stem
+
+    track_data = TrackCreate(
+        file_path=file_path,
+        title=title,
+        artist=artist,
+        album=album,
+        year=year,
+        genre=genre,
+        bpm=bpm,
+        key=key,
+    )
+
+    return track_data, None, file_props
+
+
+def extract_metadata(file_path: str) -> Tuple[TrackCreate, Optional[str], dict]:
+    """
+    Extract metadata from an audio file using mutagen with timeout protection.
+
+    Args:
+        file_path: Path to the audio file
+
+    Returns:
+        Tuple of (TrackCreate object, error message if any, file properties dict)
+    """
+    try:
+        # Use ThreadPoolExecutor to add timeout protection
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(_extract_metadata_sync, file_path)
+            try:
+                return future.result(timeout=METADATA_EXTRACTION_TIMEOUT)
+            except FutureTimeoutError:
+                return _create_error_response(
+                    file_path,
+                    f"Timeout reading metadata (>{METADATA_EXTRACTION_TIMEOUT}s)",
+                )
+
+    except ID3NoHeaderError:
+        return _create_error_response(file_path, "No ID3 header found")
+    except (OSError, IOError, ValueError) as e:
+        return _create_error_response(file_path, f"Error reading metadata: {str(e)}")
+    except (AttributeError, TypeError) as e:
+        # Mutagen-specific errors
+        return _create_error_response(file_path, f"Metadata format error: {str(e)}")
