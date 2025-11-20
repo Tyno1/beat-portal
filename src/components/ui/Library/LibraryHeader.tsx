@@ -1,7 +1,11 @@
-import { Download, Upload } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { Button } from "../../atoms";
 
-export default function LibraryHeader() {
+interface LibraryHeaderProps {
+	onCreatePlaylist?: () => void;
+}
+
+export default function LibraryHeader({ onCreatePlaylist }: LibraryHeaderProps) {
   return (
     <div className="flex justify-between items-center border-b border-border pb-4">
       <h1 className="text-2xl font-bold text-foreground">Library</h1>
@@ -17,10 +21,11 @@ export default function LibraryHeader() {
         <Button
           variant="solid"
           color="primary"
-          iconBefore={<Upload size={16} />}
+          iconBefore={<Plus size={16} />}
           size="sm"
+          onClick={onCreatePlaylist}
         >
-          Export Playlist
+          Create Playlist
         </Button>
       </div>
     </div>

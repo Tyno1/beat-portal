@@ -157,6 +157,12 @@ export interface paths {
                     bpm_min?: number;
                     bpm_max?: number;
                     key?: string;
+                    /** @description Filter by exact artist name */
+                    artist?: string;
+                    /** @description Minimum year (inclusive) */
+                    year_min?: number;
+                    /** @description Maximum year (inclusive) */
+                    year_max?: number;
                     sort_by?: "title" | "artist" | "bpm" | "key" | "year" | "created_at";
                     sort_order?: "asc" | "desc";
                 };
@@ -345,6 +351,85 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["BulkDeleteTracksResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tracks/{track_id}/reset-metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reset Track Metadata
+         * @description Reset track metadata to original values from the audio file. Reads metadata directly from file tags.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description ID of the track to reset */
+                    track_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["ResetMetadataRequest"];
+                };
+            };
+            responses: {
+                /** @description Metadata reset successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ResetMetadataResponse"];
+                    };
+                };
+                /** @description Bad request (e.g., track has no file path) */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            detail?: string;
+                        };
+                    };
+                };
+                /** @description Track not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            detail?: string;
+                        };
+                    };
+                };
+                /** @description Error reading metadata from file */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            detail?: string;
+                        };
                     };
                 };
             };
@@ -1035,6 +1120,137 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/refdata/{refdata_type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Reference Data
+         * @description Get reference data for filters and other stable values
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Type of reference data to retrieve */
+                    refdata_type: components["schemas"]["RefdataType"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Reference data retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RefdataResponse"];
+                    };
+                };
+                /** @description Reference data type not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            detail?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create or Update Reference Data
+         * @description Create or update reference data entries for a specific type and key
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Type of reference data */
+                    refdata_type: components["schemas"]["RefdataType"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateRefdataRequest"];
+                };
+            };
+            responses: {
+                /** @description Reference data created or updated successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateRefdataResponse"];
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            detail?: string;
+                        };
+                    };
+                };
+            };
+        };
+        /**
+         * Delete All Reference Data for Type
+         * @description Delete all reference data entries for a given type
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Type of reference data to delete */
+                    refdata_type: components["schemas"]["RefdataType"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Reference data deleted successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DeleteRefdataResponse"];
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            detail?: string;
+                        };
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1262,6 +1478,40 @@ export interface components {
             /** @description List of errors encountered during the batch analysis */
             errors?: string[];
         };
+        /** @description Request to reset track metadata to original values from file */
+        ResetMetadataRequest: {
+            /**
+             * @description If true, update the track in the database with original metadata
+             * @default false
+             */
+            update_track: boolean;
+        };
+        /** @description Response from reset metadata operation */
+        ResetMetadataResponse: {
+            /** Format: uuid */
+            track_id?: string;
+            file_path?: string;
+            /**
+             * @description Original metadata values read from the audio file
+             * @example {
+             *       "title": "Song Title",
+             *       "artist": "Artist Name",
+             *       "album": "Album Name",
+             *       "year": 2020,
+             *       "genre": "Electronic",
+             *       "bpm": 128,
+             *       "key": "Am"
+             *     }
+             */
+            original_metadata?: {
+                [key: string]: unknown;
+            };
+            /**
+             * @description Whether the track was updated in the database
+             * @default false
+             */
+            updated: boolean;
+        };
         EnhanceMetadataRequest: {
             /** Format: uuid */
             track_id: string;
@@ -1378,9 +1628,53 @@ export interface components {
             distribution?: {
                 mood?: string;
                 count?: number;
-                /** Format: float */
                 percentage?: number;
             }[];
+        };
+        /**
+         * @description Available reference data types. Can be extended with additional types as the project grows.
+         * @example trackfilters
+         * @enum {string}
+         */
+        RefdataType: "trackfilters";
+        /** @description A single key-value pair in reference data */
+        RefdataItem: {
+            /** @description The filter category name (e.g., 'genre', 'mood') */
+            key: string;
+            /** @description List of filter options for this category */
+            value: string[];
+        };
+        /** @description Reference data response as an array of key-value pairs */
+        RefdataResponse: {
+            /** @description Array of reference data categories with their options */
+            data: components["schemas"]["RefdataItem"][];
+        };
+        /** @description Request schema for creating or updating reference data */
+        CreateRefdataRequest: {
+            /** @description The filter category name (e.g., 'genre', 'mood') */
+            key: string;
+            /** @description List of values to store for this key */
+            value: string[];
+        };
+        /** @description Response schema for creating reference data */
+        CreateRefdataResponse: {
+            /** @description The reference data type */
+            type: string;
+            /** @description The filter category name */
+            key: string;
+            /** @description Number of new entries created */
+            created_count: number;
+            /** @description Number of existing entries updated */
+            updated_count: number;
+        };
+        /** @description Response schema for deleting reference data */
+        DeleteRefdataResponse: {
+            /** @description The reference data type */
+            type: string;
+            /** @description The filter category name */
+            key: string;
+            /** @description Number of entries deleted */
+            deleted_count: number;
         };
     };
     responses: never;

@@ -4,6 +4,8 @@ import type {
 	GetTracksResponse,
 	PostBulkDeleteTracksRequest,
 	PostBulkDeleteTracksResponse,
+	PostTrackMetadataResetRequest,
+	PostTrackMetadataResetResponse,
 	PostTrackRequest,
 	PostTrackResponse,
 	PutTrackRequest,
@@ -57,6 +59,16 @@ export const bulkDeleteTracks = async (
 	return response.data;
 };
 
+export const resetTrackMetadata = async (
+	trackId: string,
+	request?: PostTrackMetadataResetRequest,
+): Promise<PostTrackMetadataResetResponse> => {
+	const response = await apiClient.post<
+		PostTrackMetadataResetResponse
+	>(`/tracks/${trackId}/reset-metadata`, request);
+	return response.data;
+};
+
 const tracksApi = {
 	getTracks,
 	createTrack,
@@ -64,7 +76,7 @@ const tracksApi = {
 	updateTrack,
 	deleteTrack,
 	bulkDeleteTracks,
+	resetTrackMetadata,
 };
 
 export default tracksApi;
-

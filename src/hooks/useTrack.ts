@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { tracks } from "../apiClient";
 import type {
@@ -7,6 +12,8 @@ import type {
 	GetTracksResponse,
 	PostBulkDeleteTracksRequest,
 	PostBulkDeleteTracksResponse,
+	PostTrackMetadataResetRequest,
+	PostTrackMetadataResetResponse,
 	PostTrackRequest,
 	PostTrackResponse,
 	PutTrackRequest,
@@ -17,6 +24,21 @@ export function useTracks(params?: GetTracksRequest) {
 	return useQuery<GetTracksResponse>({
 		queryKey: ["tracks", params],
 		queryFn: () => tracks.getTracks(params),
+	});
+}
+
+export function useAllTracks(params?: Omit<GetTracksRequest, "page">) {
+	return useInfiniteQuery<GetTracksResponse>({
+		queryKey: ["tracks", "all", params],
+		queryFn: ({ pageParam = 1 }) =>
+			tracks.getTracks({ ...params, page: pageParam as number, size: 100 }),
+		getNextPageParam: (lastPage) => {
+			if (lastPage.pagination?.has_next) {
+				return (lastPage.pagination?.page || 1) + 1;
+			}
+			return undefined;
+		},
+		initialPageParam: 1,
 	});
 }
 
@@ -76,6 +98,25 @@ export function useBulkDeleteTracks() {
 		mutationFn: (request) => tracks.bulkDeleteTracks(request),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["tracks"] });
+		},
+	});
+}
+
+export function useResetTrackMetadata() {
+	const queryClient = useQueryClient();
+	return useMutation<
+		PostTrackMetadataResetResponse,
+		AxiosError,
+		{
+			trackId: string;
+			request?: PostTrackMetadataResetRequest;
+		}
+	>({
+		mutationFn: ({ trackId, request }) =>
+			tracks.resetTrackMetadata(trackId, request),
+		onSuccess: (_, variables) => {
+			queryClient.invalidateQueries({ queryKey: ["tracks"] });
+			queryClient.invalidateQueries({ queryKey: ["track", variables.trackId] });
 		},
 	});
 }

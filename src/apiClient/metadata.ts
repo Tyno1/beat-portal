@@ -26,6 +26,7 @@ export const batchAnalyzeMetadata = async (
 	return response.data;
 };
 
+
 const metadataApi = {
 	analyzeMetadata,
 	batchAnalyzeMetadata,

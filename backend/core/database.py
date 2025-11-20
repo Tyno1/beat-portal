@@ -18,7 +18,7 @@ def get_db() -> Generator[Tuple[sqlite3.Connection, sqlite3.Cursor], None, None]
             cursor.execute("SELECT * FROM tracks")
             results = cursor.fetchall()
     """
-    connection = sqlite3.connect("beat_portal.db")
+    connection = sqlite3.connect("beat_portal.db", check_same_thread=False)
     connection.row_factory = sqlite3.Row  # Enable column access by name
     cursor = connection.cursor()
     try:
@@ -43,7 +43,7 @@ def get_db_connection() -> Generator[sqlite3.Connection, None, None]:
             cursor = db.cursor()
             ...
     """
-    conn = sqlite3.connect("beat_portal.db")
+    conn = sqlite3.connect("beat_portal.db", check_same_thread=False)
     conn.row_factory = sqlite3.Row
     try:
         yield conn
@@ -106,5 +106,20 @@ def init_db():
         cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_playlist_tracks_track_id 
             ON playlist_tracks(track_id)
+        """)
+        # Reference data table for filter options and other stable reference data
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS refdata (
+                type TEXT NOT NULL,
+                key TEXT NOT NULL,
+                value TEXT NOT NULL,
+                count INTEGER DEFAULT 1,
+                updated_at TEXT,
+                PRIMARY KEY (type, key, value)
+            )
+        """)
+        cursor.execute("""
+            CREATE INDEX IF NOT EXISTS idx_refdata_type 
+            ON refdata(type)
         """)
         conn.commit()

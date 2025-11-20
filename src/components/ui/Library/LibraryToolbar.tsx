@@ -3,14 +3,12 @@ import { useState } from "react";
 import { IconButton, Input } from "../../atoms";
 import { Modal } from "../../molecules";
 import FilterTray from "./FilterTray";
-import type { Track } from "./TrackTable";
 
 export type ViewMode = "table" | "grid";
 
 interface LibraryToolbarProps {
 	viewMode: ViewMode;
 	onViewChange: (view: ViewMode) => void;
-	tracks: Track[];
 	selectedFilters: {
 		[key: string]: string[];
 	};
@@ -22,7 +20,6 @@ interface LibraryToolbarProps {
 export default function LibraryToolbar({
 	viewMode,
 	onViewChange,
-	tracks,
 	selectedFilters,
 	onFilterChange,
 	onSearchTextChange,
@@ -61,7 +58,6 @@ export default function LibraryToolbar({
 					contentClassName="max-h-[80vh]"
 				>
 					<FilterTray
-						tracks={tracks}
 						selectedFilters={selectedFilters}
 						onFilterChange={onFilterChange}
 					/>

@@ -6,6 +6,8 @@ type PaginationControlProps = {
   totalPages: number;
   onPrevious: () => void;
   onNext: () => void;
+  hasNext: boolean;
+  hasPrevious: boolean;
 };
 
 export default function PaginationControl({
@@ -13,6 +15,8 @@ export default function PaginationControl({
   totalPages,
   onPrevious,
   onNext,
+  hasNext,
+  hasPrevious,
 }: PaginationControlProps) {
   return (
     <div className="flex items-center gap-4 justify-end mt-4">
@@ -23,6 +27,7 @@ export default function PaginationControl({
         variant="solid"
         size="sm"
         onClick={onPrevious}
+        disabled={!hasPrevious}
       />
       <span className="text-sm text-muted-foreground">
         {currentPage} of {totalPages}
@@ -34,6 +39,7 @@ export default function PaginationControl({
         variant="solid"
         size="sm"
         onClick={onNext}
+        disabled={!hasNext}
       />
     </div>
   );
