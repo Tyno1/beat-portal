@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -133,6 +133,40 @@ class Pagination(BaseModel):
     has_previous: Optional[bool] = None
 
 
+class GetTracksQueryParams(BaseModel):
+    """Query parameters for filtering and paginating tracks."""
+
+    page: int = Field(1, ge=1, description="Page number (1-based)")
+    size: int = Field(50, ge=1, le=100, description="Number of items per page")
+    search: str = Field("", description="Search query for title, artist, or album")
+    genre: str = Field("", description="Filter by genre")
+    mood: str = Field("", description="Filter by mood")
+    bpm_min: int = Field(0, description="Minimum BPM (inclusive)")
+    bpm_max: int = Field(0, description="Maximum BPM (inclusive)")
+    key: str = Field("", description="Filter by musical key")
+    artist: str = Field("", description="Filter by exact artist name")
+    year_min: int = Field(0, description="Minimum year (inclusive)")
+    year_max: int = Field(0, description="Maximum year (inclusive)")
+    sort_by: str = Field("title", description="Sort column")
+    sort_order: str = Field("desc", description="Sort order (asc/desc)")
+
+    class Config:
+        """Pydantic config for query parameters."""
+
+        json_schema_extra = {
+            "example": {
+                "page": 1,
+                "size": 50,
+                "search": "electronic",
+                "genre": "House",
+                "bpm_min": 120,
+                "bpm_max": 140,
+                "sort_by": "title",
+                "sort_order": "asc",
+            }
+        }
+
+
 class TracksListResponse(BaseModel):
     """Response wrapper for paginated track listings."""
 
@@ -239,6 +273,38 @@ class AnalyzeMetadataRequest(BaseModel):
 
     file_path: Optional[str] = Field(None, example="/path/to/track.mp3")
     analysis_options: Optional[AnalysisOptions] = None
+
+
+class ResetMetadataRequest(BaseModel):
+    """Request to reset track metadata to original values from file."""
+
+    update_track: Optional[bool] = Field(
+        False,
+        description="If true, update the track in the database with original metadata",
+    )
+
+
+class ResetMetadataResponse(BaseModel):
+    """Response from reset metadata operation."""
+
+    track_id: Optional[UUID] = None
+    file_path: Optional[str] = None
+    original_metadata: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Original metadata values read from the audio file",
+        example={
+            "title": "Song Title",
+            "artist": "Artist Name",
+            "album": "Album Name",
+            "year": 2020,
+            "genre": "Electronic",
+            "bpm": 128,
+            "key": "Am",
+        },
+    )
+    updated: Optional[bool] = Field(
+        False, description="Whether the track was updated in the database"
+    )
 
 
 class BatchAnalyzeMetadataRequest(BaseModel):
@@ -444,3 +510,49 @@ class MoodDistributionResponse(BaseModel):
     """Mood distribution analysis results."""
 
     distribution: Optional[List[DistributionItem3]] = None
+
+
+class RefdataType(Enum):
+    """Available reference data types."""
+
+    TRACKFILTERS = "trackfilters"
+
+
+class RefdataItem(BaseModel):
+    """A single key-value pair in reference data."""
+
+    key: str = Field(..., description="The filter category name (e.g., 'genre', 'mood')")
+    value: List[str] = Field(..., description="List of filter options for this category")
+
+
+class RefdataResponse(BaseModel):
+    """Reference data response as an array of key-value pairs."""
+
+    data: List[RefdataItem] = Field(..., description="Array of reference data categories with their options")
+
+
+class CreateRefdataRequest(BaseModel):
+    """Request schema for creating or updating reference data."""
+
+    key: str = Field(..., description="The filter category name (e.g., 'genre', 'mood')")
+    value: List[str] = Field(
+        ...,
+        description="List of values to store for this key",
+    )
+
+
+class CreateRefdataResponse(BaseModel):
+    """Response schema for creating reference data."""
+
+    type: str = Field(..., description="The reference data type")
+    key: str = Field(..., description="The filter category name")
+    created_count: int = Field(..., description="Number of new entries created")
+    updated_count: int = Field(..., description="Number of existing entries updated")
+
+
+class DeleteRefdataResponse(BaseModel):
+    """Response schema for deleting reference data."""
+
+    type: str = Field(..., description="The reference data type")
+    key: str = Field(..., description="The filter category name")
+    deleted_count: int = Field(..., description="Number of entries deleted")

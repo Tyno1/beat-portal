@@ -1,13 +1,14 @@
 import { AxiosError } from "axios";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useActiveScanStatus } from "../../../hooks/useScan";
-import { Badge, Button, LoadingSpinner } from "../../atoms";
+import { Badge, Button, IconButton, LoadingSpinner } from "../../atoms";
 import { Alert } from "../../molecules";
 
 type ProgressIndicatorProps = {
 	error?: Error | undefined;
+	dismissible?: boolean;
 };
 
 const DISCOVERY_MESSAGES = [
@@ -17,7 +18,7 @@ const DISCOVERY_MESSAGES = [
 	"Finding audio tracks...",
 ];
 
-export default function ProgressIndicator({ error }: ProgressIndicatorProps) {
+export default function ProgressIndicator({ error, dismissible = false }: ProgressIndicatorProps) {
 	const navigate = useNavigate();
 	const {
 		data: scanStatus,
@@ -25,8 +26,23 @@ export default function ProgressIndicator({ error }: ProgressIndicatorProps) {
 		error: scanStatusError,
 		isError: isScanStatusError,
 	} = useActiveScanStatus();
-	const [discoveryMessageIndex, setDiscoveryMessageIndex] = useState(0);
 
+	
+	const [discoveryMessageIndex, setDiscoveryMessageIndex] = useState(0);
+	const [isVisible, setIsVisible] = useState(true);
+
+	const {
+		status,
+		message,
+		progress,
+		files_scanned,
+		files_added,
+		files_skipped,
+		errors: scanStatusErrors,
+		paths,
+	} = scanStatus || {};
+
+	
 	// Rotate discovery messages at intervals when in discovering state
 	useEffect(() => {
 		if (!scanStatus || scanStatus.status !== "discovering") {
@@ -43,6 +59,14 @@ export default function ProgressIndicator({ error }: ProgressIndicatorProps) {
 		return () => clearInterval(interval);
 	}, [scanStatus]);
 
+
+	useEffect(() => {
+		if (status === "discovering" || status === "scanning") {
+			setIsVisible(true);
+		}
+	}, [status]);
+
+	
 	if (error) {
 		const isAxiosError = error instanceof AxiosError;
 		const errorMessage = isAxiosError
@@ -66,16 +90,6 @@ export default function ProgressIndicator({ error }: ProgressIndicatorProps) {
 	if (isLoading) return <LoadingSpinner />;
 	if (isScanStatusError) return <div>Error: {scanStatusError?.message}</div>;
 
-	const {
-		status,
-		message,
-		progress,
-		files_scanned,
-		files_added,
-		files_skipped,
-		errors: scanStatusErrors,
-		paths,
-	} = scanStatus;
 
 	// Get status badge color
 	const getStatusColor = (): "primary" | "success" | "destructive" | "info" => {
@@ -114,8 +128,20 @@ export default function ProgressIndicator({ error }: ProgressIndicatorProps) {
 		? DISCOVERY_MESSAGES[discoveryMessageIndex]
 		: message;
 
+	if (!isVisible) return null;
+
 	return (
 		<div className="flex flex-col gap-4 p-4 rounded-lg">
+			{dismissible && (
+				<IconButton
+					variant="ghost"
+					size="sm"
+					icon={<XIcon className="h-4 w-4" />}
+					aria-label="Dismiss progress indicator"
+					onClick={() => setIsVisible(false)}
+					className="ml-auto"
+				/>
+			)}
 			{/* Header with status badge and message */}
 			<div className="flex flex-col items-center justify-between gap-4">
 				<Badge color={getStatusColor()} variant="solid" size="sm">

@@ -43,17 +43,17 @@
 :root {
   --primary: rgb(189, 16, 48);
   --primary-foreground: rgb(255, 255, 255);
-  --secondary: rgb(54, 54, 54); 
+  --secondary: rgb(54, 54, 54);
   --secondary-foreground: rgb(255, 255, 255);
   --background: rgb(217, 217, 217);
   --foreground: rgb(68, 68, 68);
 
-  --muted: rgb(246, 242, 242); 
+  --muted: rgb(246, 242, 242);
   --muted-foreground: rgb(68, 68, 68);
   --border: rgb(234, 236, 240);
   --input: rgb(217, 217, 217);
-  --input-foreground: rgb(255, 255, 255);
-  --ring: rgb(189, 16, 48);;
+  --input-foreground:rgb(18, 18, 18);
+  --ring: rgb(189, 16, 48);
   --card: rgb(255, 255, 255);
   --card-foreground: rgb(68, 68, 68);
   --card-border: rgb(229, 231, 235);
@@ -63,9 +63,9 @@
   --popover-foreground: rgb(68, 68, 68);
   --destructive: rgb(189, 16, 48);
   --destructive-foreground: rgb(255, 255, 255);
-  --sidebar: rgb(255, 255, 255); 
-  --sidebar-foreground: rgb(0, 0, 0); 
-  --sidebar-foreground-muted: rgb(68, 68, 68); 
+  --sidebar: rgb(255, 255, 255);
+  --sidebar-foreground: rgb(0, 0, 0);
+  --sidebar-foreground-muted: rgb(68, 68, 68);
   --sidebar-accent: rgb(189, 16, 48);
   --sidebar-accent-foreground: rgb(255, 255, 255);
 
@@ -81,7 +81,7 @@
   --badge-info-background: rgb(219, 234, 254);
   --badge-secondary: rgb(68, 68, 68);
   --badge-secondary-background: rgb(245, 245, 245);
-  --alert-success:rgb(7, 102, 1);
+  --alert-success: rgb(7, 102, 1);
   --alert-success-background: rgb(221, 252, 219);
   --alert-success-border: rgb(7, 102, 1);
   --alert-error: rgb(206, 22, 25);
@@ -97,61 +97,60 @@
 }
 
 .dark {
-    --primary: rgb(220, 38, 38);
-    --primary-foreground: rgb(255, 255, 255);
-    --secondary: rgb(54, 54, 54); 
-    --secondary-foreground: rgb(255, 255, 255);
-    --background: rgb(15, 15, 15);
-    --foreground: rgb(255, 255, 255);
-  
-    --muted: rgb(54, 54, 54); 
-    --muted-foreground: rgb(194, 194, 194);
-    --border: rgb(25, 25, 25);
-    --input: rgb(255, 255, 255);
-    --input-foreground: rgb(0, 0, 0);
-    --ring: rgb(189, 16, 48);;
-    --card: rgb(0, 0, 0);
-    --card-foreground: rgb(255, 255, 255);
-    --card-border: rgb(55, 65, 81);
-    --card-header: rgb(255, 255, 255);
-    --card-muted: rgb(160, 160, 160);
-    --popover: rgb(0, 0, 0);
-    --popover-foreground: rgb(255, 255, 255);
-    --destructive: rgb(206, 22, 25);
-    --destructive-foreground: rgb(255, 255, 255);
-    --sidebar: rgb(0, 0, 0); 
-    --sidebar-foreground: rgb(255, 255, 255);
-    --sidebar-foreground-muted: rgb(223, 223, 223); 
-    --sidebar-accent: rgb(206, 22, 25);
-    --sidebar-accent-foreground: rgb(255, 255, 255);
-  
-    --success: rgb(11, 160, 0); 
-    --success-background: rgb(4, 54, 0);
-    --badge-success: rgb(34, 197, 94);
-    --badge-success-background: rgb(4, 54, 0);
-    --badge-error: rgb(248, 113, 113);
-    --badge-error-background: rgb(69, 10, 10);
-    --badge-warning: rgb(251, 191, 36);
-    --badge-warning-background: rgb(69, 26, 3);
-    --badge-info: rgb(96, 165, 250);
-    --badge-info-background: rgb(22, 49, 120);
-    --badge-secondary: rgb(160, 160, 160);
-    --badge-secondary-background: rgb(44, 44, 44);
-    --alert-success: rgb(34, 197, 94);
-    --alert-success-background: rgb(4, 54, 0);
-    --alert-success-border: rgb(34, 197, 94);
-    --alert-error: rgb(248, 113, 113);
-    --alert-error-background: rgb(69, 10, 10);
-    --alert-error-border: rgb(248, 113, 113);
-    --alert-warning: rgb(251, 191, 36);
-    --alert-warning-background: rgb(69, 26, 3);
-    --alert-warning-border: rgb(251, 191, 36);
-    --alert-info: rgb(96, 165, 250);
-    --alert-info-background: rgb(30, 58, 138);
-    --alert-info-border: rgb(96, 165, 250);
-    --radius: 0.5rem;
-  }
+  --primary: rgb(220, 38, 38);
+  --primary-foreground: rgb(255, 255, 255);
+  --secondary: rgb(54, 54, 54);
+  --secondary-foreground: rgb(255, 255, 255);
+  --background: rgb(15, 15, 15);
+  --foreground: rgb(255, 255, 255);
 
+  --muted: rgb(54, 54, 54);
+  --muted-foreground: rgb(194, 194, 194);
+  --border: rgb(25, 25, 25);
+  --input: rgb(54, 54, 54);
+  --input-foreground: rgb(255, 255, 255);
+  --ring: rgb(189, 16, 48);
+  --card: rgb(0, 0, 0);
+  --card-foreground: rgb(255, 255, 255);
+  --card-border: rgb(55, 65, 81);
+  --card-header: rgb(255, 255, 255);
+  --card-muted: rgb(160, 160, 160);
+  --popover: rgb(0, 0, 0);
+  --popover-foreground: rgb(255, 255, 255);
+  --destructive: rgb(206, 22, 25);
+  --destructive-foreground: rgb(255, 255, 255);
+  --sidebar: rgb(0, 0, 0);
+  --sidebar-foreground: rgb(255, 255, 255);
+  --sidebar-foreground-muted: rgb(223, 223, 223);
+  --sidebar-accent: rgb(206, 22, 25);
+  --sidebar-accent-foreground: rgb(255, 255, 255);
+
+  --success: rgb(11, 160, 0);
+  --success-background: rgb(4, 54, 0);
+  --badge-success: rgb(34, 197, 94);
+  --badge-success-background: rgb(4, 54, 0);
+  --badge-error: rgb(248, 113, 113);
+  --badge-error-background: rgb(69, 10, 10);
+  --badge-warning: rgb(251, 191, 36);
+  --badge-warning-background: rgb(69, 26, 3);
+  --badge-info: rgb(96, 165, 250);
+  --badge-info-background: rgb(22, 49, 120);
+  --badge-secondary: rgb(160, 160, 160);
+  --badge-secondary-background: rgb(44, 44, 44);
+  --alert-success: rgb(34, 197, 94);
+  --alert-success-background: rgb(4, 54, 0);
+  --alert-success-border: rgb(34, 197, 94);
+  --alert-error: rgb(248, 113, 113);
+  --alert-error-background: rgb(69, 10, 10);
+  --alert-error-border: rgb(248, 113, 113);
+  --alert-warning: rgb(251, 191, 36);
+  --alert-warning-background: rgb(69, 26, 3);
+  --alert-warning-border: rgb(251, 191, 36);
+  --alert-info: rgb(96, 165, 250);
+  --alert-info-background: rgb(30, 58, 138);
+  --alert-info-border: rgb(96, 165, 250);
+  --radius: 0.5rem;
+}
 
 body {
   background-color: var(--background);
@@ -169,18 +168,26 @@ html {
 body {
   transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
-button, a{
+button,
+a {
   cursor: pointer;
 }
 
 /* Only transition theme-related properties on interactive elements */
-button, input, select, textarea {
-  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+button,
+input,
+select,
+textarea {
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
 }
 
 /* Theme-aware elements */
-.card, .btn-primary, .btn-secondary {
-  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+.card,
+.btn-primary,
+.btn-secondary {
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
 }
 
 /* Sidebar styles */
@@ -188,7 +195,8 @@ button, input, select, textarea {
   background-color: rgb(var(--sidebar));
   color: rgb(var(--sidebar-foreground));
   border-right: 1px solid rgb(var(--sidebar-border));
-  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
 }
 
 .sidebar-item {
@@ -327,13 +335,13 @@ button, input, select, textarea {
 }
 
 .window-control.close {
-  background-color: #FF5F56;
+  background-color: #ff5f56;
 }
 
 .window-control.minimize {
-  background-color: #FFBD2E;
+  background-color: #ffbd2e;
 }
 
 .window-control.maximize {
-  background-color: #27C93F;
+  background-color: #27c93f;
 }

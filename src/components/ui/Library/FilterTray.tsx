@@ -1,140 +1,130 @@
+import { useRefdata } from "../../../hooks/useRefdata";
 import type { SelectOption } from "../../atoms";
 import { Select } from "../../atoms";
-import type { Track } from "./TrackTable";
 
 interface FilterCategory {
-	label: string;
-	key: keyof Track;
-	options: string[];
+  label: string;
+  key: string;
+  options: string[];
 }
 
 interface FilterTrayProps {
-	tracks: Track[];
-	selectedFilters: {
-		[key: string]: string[];
-	};
-	onFilterChange: (category: string, selectedValues: string[]) => void;
+  selectedFilters: {
+    [key: string]: string[];
+  };
+  onFilterChange: (category: string, selectedValues: string[]) => void;
 }
 
 export default function FilterTray({
-	tracks,
-	selectedFilters,
-	onFilterChange,
+  selectedFilters,
+  onFilterChange,
 }: FilterTrayProps) {
-	// Extract unique values for each category
-	const getUniqueValues = (key: keyof Track): string[] => {
-		const values = tracks
-			.map((track) => track[key])
-			.filter((value): value is string => typeof value === "string")
-			.filter((value, index, self) => self.indexOf(value) === index)
-			.sort();
-		return values;
-	};
+  const { data: filterOptions, isLoading } = useRefdata("trackfilters");
 
-	const getNumericRanges = (key: "bpm" | "year"): string[] => {
-		const values = tracks.map((track) => track[key]) as number[];
-		const min = Math.min(...values);
-		const max = Math.max(...values);
+  if (isLoading) {
+    return (
+      <div className="w-full space-y-4 grid grid-cols-2 gap-4">
+        <div className="text-sm text-muted-foreground">Loading filters...</div>
+      </div>
+    );
+  }
 
-		if (key === "bpm") {
-			// Create BPM ranges
-			const ranges: string[] = [];
-			for (let i = 60; i <= max; i += 20) {
-				const rangeEnd = Math.min(i + 19, max);
-				ranges.push(`${i}-${rangeEnd} BPM`);
-			}
-			return ranges;
-		} else {
-			// Create year ranges
-			const ranges: string[] = [];
-			const decadeStart = Math.floor(min / 10) * 10;
-			const decadeEnd = Math.ceil(max / 10) * 10;
-			for (let i = decadeStart; i <= decadeEnd; i += 10) {
-				ranges.push(`${i}s`);
-			}
-			return ranges;
-		}
-	};
+  if (!filterOptions || !filterOptions.data) {
+    return (
+      <div className="w-full space-y-4 grid grid-cols-2 gap-4">
+        <div className="text-sm text-muted-foreground">
+          No filter options available
+        </div>
+      </div>
+    );
+  }
 
-	const categories: FilterCategory[] = [
-		{
-			label: "Genre",
-			key: "genre",
-			options: getUniqueValues("genre"),
-		},
-		{
-			label: "Mood",
-			key: "mood",
-			options: getUniqueValues("mood"),
-		},
-		{
-			label: "Key",
-			key: "key",
-			options: getUniqueValues("key"),
-		},
-		{
-			label: "Artist",
-			key: "artist",
-			options: getUniqueValues("artist"),
-		},
-	];
+  // Map key names to display labels
+  const keyToLabel: Record<string, string> = {
+    genre: "Genre",
+    mood: "Mood",
+    key: "Key",
+    artist: "Artist",
+    bpm: "BPM Range",
+    year: "Year Range",
+  };
 
-	const bpmRanges = getNumericRanges("bpm");
-	const yearRanges = getNumericRanges("year");
+  // Separate categories from ranges
+  const categories: FilterCategory[] = [];
+  let bpmRanges: string[] = [];
+  let yearRanges: string[] = [];
 
-	// Convert string arrays to SelectOption format
-	const convertToSelectOptions = (options: string[]): SelectOption[] => {
-		return options.map((option) => ({ label: option, value: option }));
-	};
+  filterOptions.data.forEach((item) => {
+    if (item.key === "bpm") {
+      bpmRanges = item.value;
+    } else if (item.key === "year") {
+      yearRanges = item.value;
+    } else {
+      categories.push({
+        label: keyToLabel[item.key] || item.key,
+        key: item.key,
+        options: item.value,
+      });
+    }
+  });
 
-	return (
-		<div className="w-full space-y-4 grid grid-cols-2 gap-4">
-			{/* Category filters */}
-			{categories.map((category) => {
-				const selectOptions = convertToSelectOptions(category.options);
-				return (
-					<Select
-						key={category.key}
-						label={category.label}
-						options={selectOptions}
-						value={selectedFilters[category.key] || []}
-						onChange={(selectedValues) =>
-							onFilterChange(category.key, selectedValues)
-						}
-						multiple
-						variant="outline"
-						size="md"
-						placeholder={`Select ${category.label.toLowerCase()}...`}
-						maxHeight="200px"
-					/>
-				);
-			})}
+  // Convert string arrays to SelectOption format
+  const convertToSelectOptions = (options: string[]): SelectOption[] => {
+    return options.map((option) => ({ label: option, value: option }));
+  };
 
-			{/* BPM Range */}
-			<Select
-				label="BPM Range"
-				options={convertToSelectOptions(bpmRanges)}
-				value={selectedFilters.bpm || []}
-				onChange={(selectedValues) => onFilterChange("bpm", selectedValues)}
-				multiple
-				variant="outline"
-				size="md"
-				placeholder="Select BPM ranges..."
-				maxHeight="200px"
-			/>
+  return (
+    <div className="w-full space-y-4 grid grid-cols-2 gap-4">
+      {/* Category filters */}
+      {categories.map((category) => {
+        const selectOptions = convertToSelectOptions(category.options);
+        return (
+          <Select
+            key={category.key}
+            label={category.label}
+            options={selectOptions}
+            value={selectedFilters[category.key] || []}
+            onChange={(selectedValues) =>
+              onFilterChange(category.key, selectedValues)
+            }
+            multiple
+            variant="outline"
+            size="md"
+            placeholder={`Select ${category.label.toLowerCase()}...`}
+            maxHeight="200px"
+          />
+        );
+      })}
 
-			{/* Year Range */}
-			<Select
-				label="Year Range"
-				options={convertToSelectOptions(yearRanges)}
-				value={selectedFilters.year || []}
-				onChange={(selectedValues) => onFilterChange("year", selectedValues)}
-				multiple
-				variant="outline"
-				size="md"
-				placeholder="Select year ranges..."
-				maxHeight="200px"
-			/>
-		</div>
-	);
+      {/* BPM Range */}
+      {bpmRanges.length > 0 && (
+        <Select
+          label="BPM Range"
+          options={convertToSelectOptions(bpmRanges)}
+          value={selectedFilters.bpm || []}
+          onChange={(selectedValues) => onFilterChange("bpm", selectedValues)}
+          multiple
+          variant="outline"
+          size="md"
+          placeholder="Select BPM ranges..."
+          maxHeight="200px"
+        />
+      )}
+
+      {/* Year Range */}
+      {yearRanges.length > 0 && (
+        <Select
+          label="Year Range"
+          options={convertToSelectOptions(yearRanges)}
+          value={selectedFilters.year || []}
+          onChange={(selectedValues) => onFilterChange("year", selectedValues)}
+          multiple
+          variant="outline"
+          size="md"
+          placeholder="Select year ranges..."
+          maxHeight="200px"
+        />
+      )}
+    </div>
+  );
 }

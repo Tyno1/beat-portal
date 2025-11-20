@@ -14,9 +14,10 @@ export type Track = components["schemas"]["Track"];
 
 interface TrackTableProps {
   data: Track[];
+  onTrackClick?: (trackId: string) => void;
 }
 
-export default function TrackTable({ data }: TrackTableProps) {
+export default function TrackTable({ data, onTrackClick }: TrackTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns: ColumnDef<Track>[] = [
@@ -181,7 +182,13 @@ export default function TrackTable({ data }: TrackTableProps) {
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-border hover:bg-muted/10 transition-colors"
+                className="border-b border-border hover:bg-muted/10 transition-colors cursor-pointer"
+                onClick={() => {
+                  const track = row.original;
+                  if (track.id && onTrackClick) {
+                    onTrackClick(track.id);
+                  }
+                }}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3 text-sm text-foreground truncate max-w-[100px]">

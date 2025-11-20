@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.database import init_db
-from routers import analysis, library, metadata, playlists, system, tracks
+from routers import analysis, library, metadata, playlists, refdata, system, tracks
 
 
 @asynccontextmanager
@@ -35,3 +35,4 @@ app.include_router(tracks.router)
 app.include_router(analysis.router)
 app.include_router(metadata.router)
 app.include_router(playlists.router)
+app.include_router(refdata.router)

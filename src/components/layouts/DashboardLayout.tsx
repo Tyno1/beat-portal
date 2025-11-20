@@ -106,7 +106,7 @@ export default function DashboardLayout({ navItems }: DashboardLayoutProps) {
 					</ul>
 				</nav>
 
-				{isMenuOpen && <ProgressIndicator />}
+				{isMenuOpen && <ProgressIndicator dismissible={true} />}
 
 				<div className="p-4 w-full border-t border-border flex flex-col gap-2 items-center">
 

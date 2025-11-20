@@ -1,8 +1,63 @@
+import { open } from "@tauri-apps/plugin-dialog";
+import { platform } from "@tauri-apps/plugin-os";
+import { AxiosError } from "axios";
 import { FolderOpen } from "lucide-react";
+import { useState } from "react";
 import { Button, Input } from "../components/atoms";
 import { Card, PageHeader } from "../components/molecules";
+import ProgressIndicator from "../components/ui/Scan/ProgressIndicator";
+import { useStartScan } from "../hooks/useScan";
 
 export default function Settings() {
+	const startScanMutation = useStartScan();
+	const [startScanError, setStartScanError] = useState<AxiosError | undefined>(
+		undefined,
+	);
+	const [musicFolderPath, setMusicFolderPath] = useState<string>("");
+
+	const handleBrowseFolders = async () => {
+		try {
+			const osPlatform = platform();
+			let defaultPath = "";
+
+			// Set default path based on OS
+			if (osPlatform === "macos") {
+				defaultPath = "/Users";
+			} else if (osPlatform === "windows") {
+				defaultPath = "C:\\Users";
+			} else {
+				defaultPath = "/home";
+			}
+
+			const selected = await open({
+				directory: true,
+				multiple: true,
+				title: "Select Music Folders",
+				defaultPath: musicFolderPath || defaultPath,
+			});
+
+			if (selected) {
+				const paths = Array.isArray(selected) ? selected : [selected];
+				if (paths.length > 0) {
+					setMusicFolderPath(paths[0]);
+					
+					try {
+						await startScanMutation.mutateAsync(paths);
+						setStartScanError(undefined);
+					} catch (error) {
+						console.error("Error starting scan:", error);
+						setStartScanError(error as AxiosError);
+					}
+				}
+			}
+		} catch (error) {
+			console.error("Error selecting folders:", error);
+			if (error instanceof AxiosError) {
+				setStartScanError(error);
+			}
+		}
+	};
+
 	return (
 		<div className="py-4 pr-4 overflow-y-auto h-full">
 			<PageHeader title="Settings" />
@@ -23,17 +78,22 @@ export default function Settings() {
 								placeholder="/User/Username/Music"
 								variant="outline"
 								containerClassName="flex-1"
+								value={musicFolderPath}
+								onChange={(e) => setMusicFolderPath(e.target.value)}
 							/>
 							<Button
-								variant="outline"
-								color="secondary"
+								variant="ghost"
+								color="primary"
 								iconBefore={<FolderOpen size={16} />}
 								radius="md"
 								size="sm"
+								onClick={handleBrowseFolders}
+								disabled={startScanMutation.isPending}
 							>
-								Browse
+								{startScanMutation.isPending ? "Scanning..." : "Browse"}
 							</Button>
 						</div>
+						<ProgressIndicator error={startScanError} dismissible />
 					</div>
 				</Card>
 
