@@ -34,7 +34,7 @@ export default function LibraryToolbar({
 					placeholder="Search Tracks, year, artists or genre..."
 					leftIcon={<Search />}
 					containerClassName="flex-1 rounded-full"
-					variant="alt"
+					variant="filled"
 					size="lg"
 					value={searchText}
 					onChange={onSearchTextChange}
