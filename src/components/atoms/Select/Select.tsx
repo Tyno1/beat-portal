@@ -33,7 +33,7 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 			options,
 			value = [],
 			onChange,
-			multiple = true,
+			multiple = false,
 			variant = "default",
 			size = "md",
 			label,
@@ -140,6 +140,7 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
 					: [...value, optionValue];
 				onChange?.(newValue);
 			} else {
+				
 				onChange?.(value.includes(optionValue) ? [] : [optionValue]);
 				setIsOpen(false);
 			}
