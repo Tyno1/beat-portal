@@ -6,9 +6,9 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 	className = "",
 }) => {
 	const sizeClasses = {
-		sm: "h-4 w-4",
-		md: "h-5 w-5",
-		lg: "h-6 w-6",
+		sm: "h-3 w-3",
+		md: "h-4 w-4",
+		lg: "h-5 w-5",
 	};
 
 	const spinnerClasses = ["animate-spin", sizeClasses[size], className]
@@ -16,11 +16,14 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 		.join(" ");
 	return (
 		<svg
+			aria-label="Loading spinner"
 			className={spinnerClasses}
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			viewBox="0 0 24 24"
+			role="img"
 		>
+			<title>Loading spinner</title>
 			<circle
 				className="opacity-25"
 				cx="12"
