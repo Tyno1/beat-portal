@@ -52,7 +52,7 @@
   --muted-foreground: rgb(68, 68, 68);
   --border: rgb(234, 236, 240);
   --input: rgb(255, 255, 255);
-  --input-foreground: 68, 68, 68;
+  --input-foreground: rgb(68, 68, 68);
   --ring: rgb(189, 16, 48);
   --card: rgb(255, 255, 255);
   --card-foreground: rgb(68, 68, 68);
